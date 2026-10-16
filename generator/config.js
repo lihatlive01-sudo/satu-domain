@@ -7,4 +7,4 @@
 //                Pengaman SERIUS: secret Cloudflare GENERATOR_KEY
 //                (diatur via: wrangler secret put GENERATOR_KEY).
 // ============================================================
-var GEN_PASSWORD = "";
+var GEN_PASSWORD = "PASS112233";
