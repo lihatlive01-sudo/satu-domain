@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Ultimate Dual Generator - Streaming & Safelink Suite</title>
+<style>
+:root {
+  --bg-dark: #0a0a1a;
+  --bg-panel: #12122b;
+  --bg-input: #070714;
+  --text-main: #f1f5f9;
+  --text-muted: #94a3b8;
+  --accent-cyan: #00d9ff;
+  --accent-purple: #a855f7;
+  --accent-pink: #ec4899;
+  --accent-green: #10b981;
+  --accent-orange: #f59e0b;
+  --border-color: rgba(168, 85, 247, 0.25);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: radial-gradient(circle at top, #1e1b4b 0%, #0a0a1a 60%, #030308 100%);
+  color: var(--text-main);
+  min-height: 100vh;
+  padding: 30px 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.main-container {
+  width: 100%;
+  max-width: 820px;
+  background: var(--bg-panel);
+  padding: 35px 30px;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+  border: 1px solid var(--border-color);
+  backdrop-filter: blur(10px);
+}
+
+.header-title {
+  text-align: center;
+  margin-bottom: 8px;
+  background: linear-gradient(135deg, var(--accent-cyan) 0%, var(--accent-purple) 50%, var(--accent-pink) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 800;
+  font-size: 30px;
+  letter-spacing: -0.5px;
+}
+
+.header-desc {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 14px;
+  margin-bottom: 25px;
+}
+
+/* Master Mode Switcher (Generate vs Decrypt) */
+.master-tab-switch {
+  display: flex;
+  background: #000;
+  padding: 5px;
+  border-radius: 14px;
+  margin-bottom: 25px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.master-tab-btn {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text-muted);
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.master-tab-btn.active {
+  background: linear-gradient(135deg, #2563eb 0%, var(--accent-purple) 100%);
+  color: #fff;
+  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
+}
+
+.master-view { display: none; }
+.master-view.active { display: block; animation: fadeIn 0.3s ease; }
+
+.security-badge-box {
+  background: rgba(16, 185, 129, 0.12);
+  border-left: 4px solid var(--accent-green);
+  padding: 12px 18px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #cbd5e1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mode-nav {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 25px;
+  background: var(--bg-input);
+  padding: 6px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.mode-tab-btn {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-muted);
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.mode-tab-btn.active {
+  background: linear-gradient(135deg, var(--accent-purple) 0%, var(--accent-pink) 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 15px rgba(168, 85, 247, 0.35);
+}
+
+.mode-tab-btn:hover:not(.active) {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-main);
+}
+
+.mode-view { display: none; }
+.mode-view.active { display: block; animation: fadeIn 0.3s ease; }
+
+.instruction-callout {
+  background: rgba(168, 85, 247, 0.08);
+  border-left: 4px solid var(--accent-purple);
+  padding: 14px 18px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+}
+
+.instruction-callout.embed-mode {
+  background: rgba(245, 158, 11, 0.08);
+  border-left-color: var(--accent-orange);
+}
+
+.instruction-callout.decrypt-mode {
+  background: rgba(56, 189, 248, 0.08);
+  border-left-color: var(--accent-cyan);
+}
+
+.instruction-callout h4 {
+  font-size: 14px;
+  margin-bottom: 6px;
+  color: var(--accent-purple);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.instruction-callout.embed-mode h4 { color: var(--accent-orange); }
+.instruction-callout.decrypt-mode h4 { color: var(--accent-cyan); }
+
+.instruction-callout p {
+  font-size: 13px;
+  color: #cbd5e1;
+  line-height: 1.5;
+}
+
+.field-group { margin-bottom: 20px; }
+
+.field-group label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #e2e8f0;
+}
+
+.field-group label .flag-req { color: #ef4444; font-size: 16px; }
+.field-group label .flag-opt { color: var(--text-muted); font-size: 12px; font-weight: 400; }
+
+.field-group input, .field-group textarea {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  background: var(--bg-input);
+  color: var(--text-main);
+  font-size: 14px;
+  font-family: inherit;
+  transition: all 0.3s ease;
+}
+
+.field-group textarea {
+  min-height: 110px;
+  resize: vertical;
+  font-family: 'Courier New', monospace;
+  line-height: 1.4;
+}
+
+.field-group input:focus, .field-group textarea:focus {
+  outline: none;
+  border-color: var(--accent-purple);
+  box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.2);
+}
+
+.field-group .hint-text {
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+button.btn-primary-action {
+  width: 100%;
+  padding: 16px;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: linear-gradient(135deg, var(--accent-purple) 0%, var(--accent-pink) 100%);
+  color: #fff;
+  margin-top: 10px;
+  box-shadow: 0 4px 20px rgba(168, 85, 247, 0.35);
+}
+
+button.btn-primary-action.decrypt-btn {
+  background: linear-gradient(135deg, #0284c7 0%, #06b6d4 100%);
+  box-shadow: 0 4px 20px rgba(2, 132, 199, 0.35);
+}
+
+button.btn-primary-action:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px rgba(168, 85, 247, 0.5);
+}
+
+button.btn-primary-action.decrypt-btn:hover {
+  box-shadow: 0 6px 25px rgba(2, 132, 199, 0.5);
+}
+
+.output-panel {
+  display: none;
+  margin-top: 30px;
+  padding-top: 25px;
+  border-top: 1px solid var(--border-color);
+  animation: fadeIn 0.4s ease;
+}
+
+.output-card {
+  margin-bottom: 20px;
+}
+
+.output-card h4 {
+  font-size: 14px;
+  color: var(--accent-cyan);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.output-card textarea {
+  width: 100%;
+  height: 75px;
+  font-family: 'Courier New', monospace;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--bg-input);
+  color: var(--accent-green);
+  resize: none;
+  font-size: 13px;
+}
+
+.btn-copy-item {
+  width: 100%;
+  background: var(--accent-cyan);
+  color: #050515;
+  margin-top: 6px;
+  padding: 10px;
+  font-size: 13px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-copy-item:hover {
+  background: #38bdf8;
+  transform: translateY(-1px);
+}
+
+.btn-copy-item.copied {
+  background: var(--accent-green);
+  color: #ffffff;
+}
+
+.json-gist-preview {
+  background: rgba(16, 185, 129, 0.08);
+  border-left: 4px solid var(--accent-green);
+  padding: 15px;
+  margin-top: 20px;
+  border-radius: 8px;
+}
+
+.json-gist-preview h4 {
+  color: var(--accent-green);
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.json-gist-preview pre {
+  background: var(--bg-input);
+  padding: 12px;
+  border-radius: 6px;
+  overflow-x: auto;
+  font-size: 12px;
+  color: #cbd5e1;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 600px) {
+  .main-container { padding: 25px 18px; }
+  .header-title { font-size: 24px; }
+}
+</style>
+<script src="config.js"></script>
+</head>
+<body>
+
+<!-- 🔐 GERBANG PASSWORD GENERATOR ("tampilan eksklusif").
+     Password diatur di config.js (GEN_PASSWORD). Kosongkan = terbuka.
+     Catatan jujur: ini hanya penampil eksklusif (client-side).
+     Pengaman seriusnya: secret Cloudflare (GENERATOR_KEY) di _worker.js. -->
+<div id="gen-gate" style="display:none;position:fixed;inset:0;z-index:99999;background:radial-gradient(circle at top,#1e1b4b 0%,#0a0a1a 60%,#030308 100%);align-items:center;justify-content:center;">
+  <div style="background:#12122b;border:1px solid rgba(168,85,247,.25);border-radius:16px;padding:32px 28px;max-width:340px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.7);">
+    <div style="font-size:40px;margin-bottom:10px;">🔐</div>
+    <h2 style="color:#f1f5f9;margin-bottom:6px;font-size:20px;">Area Eksklusif</h2>
+    <p style="color:#94a3b8;font-size:13px;margin-bottom:18px;">Masukkan password generator untuk melanjutkan.</p>
+    <input id="gen-gate-input" type="password" placeholder="Password" style="width:100%;padding:12px;background:#070714;border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#f1f5f9;font-size:15px;margin-bottom:12px;outline:none;" />
+    <button id="gen-gate-btn" style="width:100%;padding:12px;border:none;border-radius:10px;background:linear-gradient(135deg,#2563eb,#a855f7);color:#fff;font-weight:700;font-size:15px;cursor:pointer;">Buka Generator</button>
+    <p id="gen-gate-err" style="display:none;color:#f87171;font-size:13px;margin-top:10px;">Password salah.</p>
+  </div>
+</div>
+<script>
+(function() {
+  var pw = (typeof GEN_PASSWORD !== 'undefined') ? GEN_PASSWORD : '';
+  if (!pw) return; // tidak dikunci
+  if (sessionStorage.getItem('gen_gate_ok') === '1') return; // sesi tab ini sudah dibuka
+  var gate = document.getElementById('gen-gate');
+  var inp = document.getElementById('gen-gate-input');
+  var err = document.getElementById('gen-gate-err');
+  gate.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+  function coba() {
+    if (inp.value === pw) {
+      sessionStorage.setItem('gen_gate_ok', '1');
+      gate.style.display = 'none';
+      document.body.style.overflow = '';
+    } else {
+      err.style.display = 'block';
+      inp.value = ''; inp.focus();
+    }
+  }
+  document.getElementById('gen-gate-btn').addEventListener('click', coba);
+  inp.addEventListener('keydown', function(e) { if (e.key === 'Enter') coba(); });
+  setTimeout(function() { inp.focus(); }, 300);
+})();
+</script>
+
+<div class="main-container">
+  <h1 class="header-title">⚙️ Ultimate Dual Generator</h1>
+  <p class="header-desc">Streaming Player & Safelink Suite Pro dengan Fitur Enkripsi / Dekripsi</p>
+
+  <!-- Master Switch: Generate vs Decrypt -->
+  <div class="master-tab-switch">
+    <button class="master-tab-btn active" onclick="switchMasterMode('generate')">
+      🔒 Mode Enkripsi (Generate)
+    </button>
+    <button class="master-tab-btn" onclick="switchMasterMode('decrypt')">
+      🔓 Mode Dekripsi (Pembalik Link)
+    </button>
+  </div>
+
+  <!-- ================= MASTER VIEW 1: GENERATOR (ENCRYPT) ================= -->
+  <div class="master-view active" id="view-master-generate">
+    <div class="security-badge-box">
+      <span>🔐</span>
+      <div>
+        <strong>XOR Multi-Payload Encryption:</strong> Seluruh URL terenkripsi dua arah dengan kunci rahasia untuk proteksi maksimal.
+      </div>
+    </div>
+
+    <!-- Mode Selector -->
+    <div class="mode-nav">
+      <button class="mode-tab-btn active" onclick="selectMode(1)">🎬 Mode 1: MP4 Direct</button>
+      <button class="mode-tab-btn" onclick="selectMode(2)">🔗 Mode 2: Universal Embed</button>
+    </div>
+
+    <!-- Twitter / X Auto-Extractor Card -->
+    <div class="instruction-callout" style="background: rgba(29, 155, 240, 0.12); border-left-color: #1d9bf0; margin-bottom: 22px;">
+      <h4 style="color: #38bdf8;">🐦 Auto-Extractor Video X (Twitter) - Bebas Watermark & Bebas Popup</h4>
+      <p style="margin-bottom: 10px;">Punya link Tweet atau embed X (Twitter)? Tempelkan di sini untuk mengekstrak video <strong>.MP4 langsung</strong> agar diputar di Custom Player (tanpa logo X, tanpa popup "Tonton di X", dan dengan tombol rotasi 90°).</p>
+      <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+        <input type="text" id="twitter-input-url" placeholder="https://x.com/username/status/123... atau kode <blockquote>" style="flex: 1; min-width: 240px; padding: 10px 14px; background: #070714; border: 1px solid rgba(56, 189, 248, 0.4); border-radius: 8px; color: #fff; font-size: 13px;">
+        <button type="button" onclick="handleManualTwitterExtract()" id="btn-extract-x" style="padding: 10px 18px; background: #1d9bf0; color: #fff; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 13px; transition: background 0.2s;">⚡ Ekstrak MP4 Bersih</button>
+      </div>
+      <div id="twitter-status-msg" style="display: none; margin-top: 8px; font-size: 12px; font-weight: 600;"></div>
+    </div>
+
+    <!-- MODE 1: MP4 DIRECT -->
+    <div class="mode-view active" id="view-mode-1">
+      <div class="instruction-callout">
+        <h4>💡 Mode 1: MP4 Direct + Subtitle + Safelink</h4>
+        <p>Untuk video file langsung (.mp4, .webm) atau hasil ekstraksi video X (Twitter). Video akan diputar di custom HTML5 Plyr Player dengan kontrol lengkap, tombol rotasi video 90°, tombol download safelink, dan subtitle.</p>
+      </div>
+
+      <div class="field-group">
+        <label>🏷️ Judul Video / Menu <span class="flag-opt">(Opsional untuk Food App / Gist)</span></label>
+        <input type="text" id="m1-title" placeholder="Contoh: Resep Nasi Goreng Spesial">
+        <div class="hint-text">Judul yang akan dicantumkan di file data / Gist</div>
+      </div>
+
+      <div class="field-group">
+        <label>🎥 Link Video (.mp4) <span class="flag-req">*</span></label>
+        <input type="text" id="m1-video-url" placeholder="https://cdn.domain.com/video.mp4">
+        <div class="hint-text">Link video MP4 langsung yang akan diputar di Player</div>
+      </div>
+
+      <div class="field-group">
+        <label>💬 Link Subtitle (.vtt) <span class="flag-opt">(Opsional)</span></label>
+        <input type="text" id="m1-sub-url" placeholder="https://cdn.domain.com/subtitle.vtt">
+        <div class="hint-text">Kosongkan jika tidak menggunakan subtitle</div>
+      </div>
+
+      <div class="field-group">
+        <label>📥 Link Download Kustom <span class="flag-opt">(Opsional)</span></label>
+        <input type="text" id="m1-download-url" placeholder="Kosongkan jika sama dengan link video">
+        <div class="hint-text">Kosongkan untuk otomatis memakai link video, atau isi jika ingin link download berbeda</div>
+      </div>
+
+      <button class="btn-primary-action" onclick="processMode1()">⚡ Generate Mode 1 (Encrypted)</button>
+    </div>
+
+    <!-- MODE 2: UNIVERSAL EMBED -->
+    <div class="mode-view" id="view-mode-2">
+      <div class="instruction-callout embed-mode">
+        <h4>💡 Mode 2: Universal Embed / Download Generator</h4>
+        <p>Sangat fleksibel! Anda bisa memasukkan <strong>Link Embed saja</strong>, <strong>Link Download saja</strong>, atau <strong>Keduanya</strong>. Menerima kode <code>&lt;iframe...&gt;</code> maupun URL murni <code>https://...</code>.</p>
+      </div>
+
+      <div class="field-group">
+        <label>🏷️ Judul Video / Menu <span class="flag-opt">(Opsional untuk Food App / Gist)</span></label>
+        <input type="text" id="m2-title" placeholder="Contoh: Resep Ramen Jepang Autentik">
+        <div class="hint-text">Judul yang akan dicantumkan di file data / Gist</div>
+      </div>
+
+      <div class="field-group">
+        <label>🔗 Link Embed ATAU Kode HTML Iframe <span class="flag-opt">(Opsional jika hanya link download)</span></label>
+        <textarea id="m2-embed-code" placeholder="https://doodstream.com/e/abc123xyz ATAU <iframe src='...'></iframe>"></textarea>
+        <div class="hint-text">💡 Bisa memasukkan URL embed langsung ATAU kode iframe lengkap <code>&lt;iframe...&gt;</code></div>
+      </div>
+
+      <div class="field-group">
+        <label>📥 Link Download / File Asli <span class="flag-opt">(Opsional jika hanya link embed)</span></label>
+        <input type="text" id="m2-download-url" placeholder="https://doodstream.com/d/abc123xyz">
+        <div class="hint-text">💡 Link download yang akan dibungkus ke dalam Safelink Gate</div>
+      </div>
+
+      <button class="btn-primary-action" onclick="processMode2()">⚡ Generate Mode 2 (Encrypted)</button>
+    </div>
+  </div>
+
+  <!-- ================= MASTER VIEW 2: DECRYPTOR (REVERSE TOOL) ================= -->
+  <div class="master-view" id="view-master-decrypt">
+    <div class="instruction-callout decrypt-mode">
+      <h4>🔓 Pembalik Link (URL Decryptor & Extractor)</h4>
+      <p>Tempelkan tautan Player terenkripsi (misal: <code>player.html?s=...</code>) atau tautan Safelink (<code>#dl=...</code>) untuk membalikkan enkripsi dan mengekstrak link asli.</p>
+    </div>
+
+    <div class="field-group">
+      <label>🔍 Tempelkan URL Player / Safelink Terenkripsi <span class="flag-req">*</span></label>
+      <textarea id="decrypt-input-url" placeholder="https://domain.com/player.html?s=ABCXYZ123... atau string hash terenkripsi"></textarea>
+      <div class="hint-text">Menerima link player penuh, link safelink #dl=, atau teks Base64 XOR langsung.</div>
+    </div>
+
+    <button class="btn-primary-action decrypt-btn" onclick="processDecryption()">🔓 Ekstrak & Tampilkan Link Asli</button>
+  </div>
+
+  <!-- RESULTS SECTION (SHARED) -->
+  <div class="output-panel" id="output-section">
+    <div class="output-card" id="play-card">
+      <h4 id="play-card-label">▶️ Link Player Embed (Encrypted)</h4>
+      <textarea id="output-play-url" readonly></textarea>
+      <button class="btn-copy-item" id="btn-copy-play" onclick="copyContent('output-play-url', this)">📋 Salin Link Player</button>
+    </div>
+
+    <div class="output-card" id="safelink-card">
+      <h4 id="safelink-card-label">📥 Link Safelink Download (Encrypted)</h4>
+      <textarea id="output-safelink-url" readonly></textarea>
+      <button class="btn-copy-item" id="btn-copy-dl" onclick="copyContent('output-safelink-url', this)">📋 Salin Link Safelink</button>
+    </div>
+
+    <div class="json-gist-preview" id="gist-card">
+      <h4 id="gist-card-label">📄 Data Terstruktur (JSON):</h4>
+      <pre id="output-json-gist"></pre>
+      <button class="btn-copy-item" onclick="copyContent('output-json-gist', this)">📋 Salin JSON</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ============================================
+const ENCRYPTION_KEY = '112233'; // 🔐 Kunci Enkripsi Rahasia
+// SATU DOMAIN: player & safelink selalu di root domain yang sama dengan web.
+const BASE_PLAYER_URL = window.location.origin + '/player.html';
+const BASE_SAFELINK_URL = window.location.origin + '/safelink1.html';
+
+// ============================================
+// 2. ENCRYPTION & DECRYPTION ENGINE
+// ============================================
+function encryptPayload(text) {
+  if (!text) return '';
+  const encodedURI = encodeURIComponent(text);
+  let result = '';
+  for (let i = 0; i < encodedURI.length; i++) {
+    result += String.fromCharCode(encodedURI.charCodeAt(i) ^ ENCRYPTION_KEY.charCodeAt(i % ENCRYPTION_KEY.length));
+  }
+  return btoa(result);
+}
+
+function decryptPayload(encrypted) {
+  if (!encrypted) return '';
+  let cleanStr = decodeURIComponent(encrypted.trim());
+  if (cleanStr.includes('?s=')) cleanStr = cleanStr.split('?s=')[1].split('&')[0];
+  if (cleanStr.includes('#dl=')) cleanStr = cleanStr.split('#dl=')[1].split('&')[0];
+  
+  // Percobaan 1: XOR Decryption
+  try {
+    const decoded = atob(cleanStr);
+    let result = '';
+    for (let i = 0; i < decoded.length; i++) {
+      result += String.fromCharCode(decoded.charCodeAt(i) ^ ENCRYPTION_KEY.charCodeAt(i % ENCRYPTION_KEY.length));
+    }
+    return decodeURIComponent(result);
+  } catch (e) {}
+
+  // Percobaan 2: Base64 biasa
+  try {
+    return decodeURIComponent(atob(cleanStr));
+  } catch (e) {}
+
+  // Percobaan 3: URL Decode biasa
+  try {
+    return decodeURIComponent(cleanStr);
+  } catch (e) {}
+
+  return '';
+}
+
+// ============================================
+// 3. MASTER TAB CONTROLLER (GENERATE VS DECRYPT)
+// ============================================
+function switchMasterMode(mode) {
+  document.querySelectorAll('.master-tab-btn').forEach((btn, idx) => {
+    btn.classList.toggle('active', (mode === 'generate' && idx === 0) || (mode === 'decrypt' && idx === 1));
+  });
+  
+  document.getElementById('view-master-generate').classList.toggle('active', mode === 'generate');
+  document.getElementById('view-master-decrypt').classList.toggle('active', mode === 'decrypt');
+  document.getElementById('output-section').style.display = 'none';
+}
+
+function selectMode(mode) {
+  document.querySelectorAll('.mode-tab-btn').forEach((btn, idx) => {
+    btn.classList.toggle('active', idx + 1 === mode);
+  });
+  document.querySelectorAll('.mode-view').forEach((view, idx) => {
+    view.classList.toggle('active', idx + 1 === mode);
+  });
+  document.getElementById('output-section').style.display = 'none';
+}
+// ============================================
+// 4. TWITTER / X VIDEO EXTRACTOR ENGINE
+// ============================================
+async function resolveTwitterVideo(inputStr) {
+  if (!inputStr) return null;
+  const match = inputStr.match(/status\/(\d+)/i);
+  if (!match) return null;
+  const tweetId = match[1];
+
+  // 1. Coba Worker API internal
+  try {
+    const res = await fetch(`/api/resolve-x?status=${tweetId}`);
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.videoUrl) return data;
+    }
+  } catch(e) {}
+
+  // 2. Fallback ke fxtwitter API langsung
+  try {
+    const res = await fetch(`https://api.fxtwitter.com/i/status/${tweetId}`);
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.tweet) {
+        const videos = data.tweet.media?.videos || [];
+        const videoUrl = videos.length > 0 ? (videos[0].url || (videos[0].variants && videos[0].variants[0]?.url)) : null;
+        if (videoUrl) {
+          return {
+            videoUrl: videoUrl,
+            title: data.tweet.text ? data.tweet.text.replace(/https:\/\/t\.co\/\w+/g, '').trim().slice(0, 100) : 'Video X'
+          };
+        }
+      }
+    }
+  } catch(e) {}
+
+  return null;
+}
+
+async function handleManualTwitterExtract() {
+  const inputEl = document.getElementById('twitter-input-url');
+  const statusEl = document.getElementById('twitter-status-msg');
+  const btn = document.getElementById('btn-extract-x');
+  const val = inputEl.value.trim();
+
+  if (!val) {
+    alert('❌ Masukkan link Tweet atau embed X terlebih dahulu!');
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = '⏳ Mengekstrak...';
+  statusEl.style.display = 'block';
+  statusEl.style.color = '#38bdf8';
+  statusEl.textContent = 'Sedang mengekstrak video MP4 langsung dari server X...';
+
+  const res = await resolveTwitterVideo(val);
+  btn.disabled = false;
+  btn.textContent = '⚡ Ekstrak MP4 Bersih';
+
+  if (res && res.videoUrl) {
+    statusEl.style.color = '#10b981';
+    statusEl.textContent = '✅ Berhasil! Video MP4 langsung telah disalin ke Mode 1 (Custom Player).';
+    
+    selectMode(1);
+    document.getElementById('m1-video-url').value = res.videoUrl;
+    if (res.title && !document.getElementById('m1-title').value) {
+      document.getElementById('m1-title').value = res.title;
+    }
+    document.getElementById('m1-video-url').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  } else {
+    statusEl.style.color = '#ef4444';
+    statusEl.textContent = '❌ Gagal mengekstrak video. Pastikan Tweet berisi video publik (bukan foto/teks saja).';
+  }
+}
+
+// ============================================
+// 5. GENERATOR LOGIC
+// ============================================
+async function processMode1() {
+  const title = (document.getElementById('m1-title')?.value || '').trim();
+  let videoUrl = document.getElementById('m1-video-url').value.trim();
+  const subUrl = document.getElementById('m1-sub-url').value.trim();
+  let dlUrl = document.getElementById('m1-download-url').value.trim();
+
+  if (!videoUrl) {
+    alert('❌ Link Video wajib diisi!');
+    return;
+  }
+
+  // Jika user menempelkan link Tweet/X di Mode 1, ekstrak otomatis MP4-nya
+  if (videoUrl.includes('twitter.com') || videoUrl.includes('x.com')) {
+    const xRes = await resolveTwitterVideo(videoUrl);
+    if (xRes && xRes.videoUrl) {
+      videoUrl = xRes.videoUrl;
+      document.getElementById('m1-video-url').value = videoUrl;
+      if (xRes.title && !title) {
+        document.getElementById('m1-title').value = xRes.title;
+      }
+    }
+  }
+
+  if (!dlUrl) {
+    dlUrl = videoUrl;
+  }
+
+  // Siapkan Payload Player (Tipe MP4)
+  const playerPayload = JSON.stringify({
+    type: "mp4",
+    src: videoUrl,
+    sub: subUrl || null
+  });
+
+  const encryptedPlayer = encryptPayload(playerPayload);
+  const encryptedDownload = encryptPayload(dlUrl);
+
+  const finalPlayUrl = `${BASE_PLAYER_URL}?s=${encodeURIComponent(encryptedPlayer)}`;
+  const finalSafelinkUrl = `${BASE_SAFELINK_URL}#dl=${encodeURIComponent(encryptedDownload)}`;
+
+  const gistJSON = {
+    id: "vid_" + Date.now().toString().slice(-6),
+    title: title || "Video Makanan Lezat",
+    play: finalPlayUrl,
+    download: finalSafelinkUrl,
+    Source: videoUrl,
+    created_at: new Date().toISOString()
+  };
+
+  renderResults(finalPlayUrl, finalSafelinkUrl, gistJSON, "▶️ Link Player Embed (Encrypted)", "📥 Link Safelink Download (Encrypted)");
+}
+
+async function processMode2() {
+  const title = (document.getElementById('m2-title')?.value || '').trim();
+  let embedInput = document.getElementById('m2-embed-code').value.trim();
+  const dlUrl = document.getElementById('m2-download-url').value.trim();
+
+  // Validasi: Cukup salah satu terisi!
+  if (!embedInput && !dlUrl) {
+    alert('❌ Isi minimal salah satu: Link Embed ATAU Link Download!');
+    return;
+  }
+
+  // Jika input adalah Tweet atau Embed X, konversi otomatis ke Player Custom Mode 1!
+  if (embedInput && (embedInput.includes('twitter.com') || embedInput.includes('x.com') || embedInput.includes('twitter-tweet'))) {
+    const xRes = await resolveTwitterVideo(embedInput);
+    if (xRes && xRes.videoUrl) {
+      selectMode(1);
+      document.getElementById('m1-video-url').value = xRes.videoUrl;
+      if (xRes.title && !title) {
+        document.getElementById('m1-title').value = xRes.title;
+      }
+      return processMode1();
+    }
+  }
+
+  let finalPlayUrl = "";
+  if (embedInput) {
+    let finalEmbedHtml = embedInput;
+    if (!embedInput.startsWith('<') && (embedInput.startsWith('http://') || embedInput.startsWith('https://'))) {
+      finalEmbedHtml = `<iframe src="${embedInput}" width="100%" height="100%" frameborder="0" allowfullscreen allow="autoplay; encrypted-media; picture-in-picture"></iframe>`;
+    }
+
+    const isThirdParty = /dood|streamwish|strwish|wishembed|videy|vidoy|streamtape|voe|filelions|lulustream|mixdrop|upstream|mp4upload|hexupload|krakenfiles|dropload/i.test(embedInput);
+    const playerPayload = JSON.stringify({
+      type: "embed",
+      html: finalEmbedHtml,
+      raw_url: embedInput.startsWith('http') ? embedInput : null,
+      source_type: isThirdParty ? "third_party" : "default"
+    });
+
+    const encryptedPlayer = encryptPayload(playerPayload);
+    finalPlayUrl = `${BASE_PLAYER_URL}?s=${encodeURIComponent(encryptedPlayer)}`;
+  }
+  
+  let finalSafelinkUrl = "";
+  if (dlUrl) {
+    const encryptedDownload = encryptPayload(dlUrl);
+    finalSafelinkUrl = `${BASE_SAFELINK_URL}#dl=${encodeURIComponent(encryptedDownload)}`;
+  }
+
+  const gistJSON = {
+    id: "emb_" + Date.now().toString().slice(-6),
+    title: title || "Video Streaming Pilihan",
+    play: finalPlayUrl || "TULIS_MANUAL_JIKA_HANYA_DOWNLOAD",
+    download: finalSafelinkUrl || "TULIS_MANUAL_JIKA_HANYA_EMBED",
+    Source: embedInput || dlUrl,
+    created_at: new Date().toISOString()
+  };
+
+  renderResults(finalPlayUrl, finalSafelinkUrl, gistJSON, "▶️ Link Player Embed (Encrypted)", "📥 Link Safelink Download (Encrypted)");
+}
+
+// ============================================
+// 5. DECRYPTION / REVERSAL TOOL LOGIC
+// ============================================
+function processDecryption() {
+  const inputStr = document.getElementById('decrypt-input-url').value.trim();
+  if (!inputStr) {
+    alert('❌ Tempelkan URL atau hash terenkripsi terlebih dahulu!');
+    return;
+  }
+
+  const decryptedRaw = decryptPayload(inputStr);
+  if (!decryptedRaw) {
+    alert('❌ Gagal mendekripsi! Pastikan URL valid dan ENCRYPTION_KEY cocok.');
+    return;
+  }
+
+  try {
+    const parsed = JSON.parse(decryptedRaw);
+    
+    if (parsed.type === 'mp4') {
+      const resultData = {
+        tipe: "MP4 Direct Video",
+        link_video_asli: parsed.src,
+        link_subtitle_asli: parsed.sub || "Tidak ada",
+        status: "Berhasil didekripsi"
+      };
+      renderResults(parsed.src, parsed.sub || '', resultData, "🎬 Link Video MP4 Langsung (Asli)", "💬 Link Subtitle (.vtt)");
+      document.getElementById('btn-copy-play').textContent = "📋 Salin Link MP4";
+      document.getElementById('btn-copy-dl').textContent = "📋 Salin Subtitle";
+    } else if (parsed.type === 'embed') {
+      const resultData = {
+        tipe: "Universal Embed",
+        kode_html: parsed.html,
+        link_murni: parsed.raw_url || "Iframe Code",
+        status: "Berhasil didekripsi"
+      };
+      renderResults(parsed.raw_url || parsed.html, '', resultData, "🔗 Link Embed / Kode HTML Asli", "");
+      document.getElementById('btn-copy-play').textContent = "📋 Salin Link Embed / Kode";
+    }
+  } catch (e) {
+    const resultData = {
+      tipe: "Tautan Langsung / Download",
+      url_asli: decryptedRaw,
+      status: "Berhasil didekripsi"
+    };
+    renderResults(decryptedRaw, '', resultData, "📥 URL Asli Terbuka", "");
+    document.getElementById('btn-copy-play').textContent = "📋 Salin URL Asli";
+  }
+}
+
+// ============================================
+// 6. RENDER RESULTS
+// ============================================
+function renderResults(playUrl, safelinkUrl, gistJson, playLabel, safelinkLabel) {
+  const outputSection = document.getElementById('output-section');
+  const playCard = document.getElementById('play-card');
+  const safelinkCard = document.getElementById('safelink-card');
+
+  if (playLabel) document.getElementById('play-card-label').textContent = playLabel;
+  if (safelinkLabel) document.getElementById('safelink-card-label').textContent = safelinkLabel;
+
+  playCard.style.display = playUrl ? 'block' : 'none';
+  document.getElementById('output-play-url').value = playUrl || '';
+
+  safelinkCard.style.display = safelinkUrl ? 'block' : 'none';
+  document.getElementById('output-safelink-url').value = safelinkUrl || '';
+
+  document.getElementById('output-json-gist').textContent = JSON.stringify(gistJson, null, 2);
+
+  outputSection.style.display = 'block';
+  setTimeout(() => {
+    outputSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }, 100);
+}
+
+function copyContent(elementId, btnElement) {
+  const el = document.getElementById(elementId);
+  const text = el.tagName === 'PRE' ? el.textContent : el.value;
+  
+  navigator.clipboard.writeText(text).then(() => {
+    const original = btnElement.textContent;
+    btnElement.textContent = '✅ Berhasil Tersalin!';
+    btnElement.classList.add('copied');
+    setTimeout(() => {
+      btnElement.textContent = original;
+      btnElement.classList.remove('copied');
+    }, 2000);
+  }).catch(err => {
+    alert('Gagal menyalin: ' + err);
+  });
+}
+</script>
+
+</body>
+</html>
