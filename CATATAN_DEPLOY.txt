@@ -1,0 +1,63 @@
+PAKET SATU DOMAIN — Web Streaming + Generator + Player
+=====================================================
+Struktur:
+  /                  -> web streaming (index.html)
+  /player.html       -> player (dimuat web dalam iframe)
+  /safelink1.html, /safelink2.html -> safelink download
+  /generator/        -> generator (terproteksi)
+  /generator/config.js -> password "tampilan eksklusif" generator
+  /api/videos        -> daftar video web (otomatis)
+  /data/videos.json  -> daftar video cadangan (bisa diedit langsung)
+
+CARA DEPLOY (GitHub -> Cloudflare, push = deploy otomatis)
+----------------------------------------------------------
+1. Upload SEMUA file/folder apa adanya ke repo GitHub.
+2. Hubungkan repo ke Cloudflare (Pages / Worker-with-assets).
+3. Tidak ada build step. Tidak ada setting khusus.
+
+KUNCI GENERATOR (secret Cloudflare) — pengaman SERIUS
+----------------------------------------------------
+1. Buat secret bernama GENERATOR_KEY berisi kata kunci rahasiamu:
+     wrangler secret put GENERATOR_KEY
+   (lalu ketik kata kuncinya saat diminta)
+   ATAU via dashboard: project -> Settings -> Variables -> Add secret.
+2. Buka SEKALI:  https://domainmu/generator/?key=KATA_KUNCI_MU
+   -> cookie 30 hari terpasang, selanjutnya buka /generator/ biasa.
+3. Selama GENERATOR_KEY belum dipasang, proteksi worker nonaktif
+   (tidak mengunci siapa pun).
+
+PASSWORD EKSKLUSIF (tampilan saja)
+----------------------------------
+1. Edit generator/config.js -> isi GEN_PASSWORD = "isi-password-mu";
+2. Buka generator -> muncul form password sebelum bisa dipakai.
+3. Kosongkan ("") = terbuka. Catatan jujur: ini client-side,
+   hanya untuk kesan eksklusif, bukan keamanan serius.
+
+DAFTAR VIDEO (/api/videos)
+--------------------------
+Prioritas: env var GIST_MASTER_URL (URL raw gist, bisa secret)
+        -> file data/videos.json
+        -> [] (kosong)
+Format entri (sudah kompatibel dengan generator):
+  { "id": "unik", "title": "...", "play": "https://domainmu/player.html?s=...",
+    "download": "...", "Source": "..." }
+Bisa juga format array langsung atau object berkategori
+{ "indonesia": [...], "asia": [...], "western": [...] }.
+
+ALUR KERJA
+----------
+1. Buka /generator/ -> tempel link video -> dapat link player + JSON.
+2. Tempel JSON sebagai entri ke gist / data/videos.json (field "play").
+3. Web otomatis memutarnya di iframe; fullscreen gate bisa pause/play
+   player milik sendiri via protokol postMessage (colekGate).
+
+YANG BERUBAH DARI VERSI LAMA
+-----------------------------
+- Deteksi adblock web v2: anti false-positive di HP (fail-open).
+  Adblock beneran tetap ditahan di pintu; hasil meragukan tetap boleh masuk.
+- Player: Plyr tetap via CDN (jsdelivr, lebih stabil di HP),
+  init diberi retry 8x@500ms sebelum fallback native.
+- Player kini NURUT perintah pause/play dari web (dulu "tuli").
+- Satu domain: link play selalu benar tanpa setting.
+- Tidak ada lagi HTML yang diduplikasi di dalam _worker.js
+  (dulu patch harus di dua file).

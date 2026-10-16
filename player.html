@@ -1,0 +1,1618 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="referrer" content="no-referrer-when-downgrade">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>Universal Player Pro</title>
+
+<!-- Plyr CSS via CDN -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/plyr@3.7.8/dist/plyr.css"/>
+<!-- Plyr JS via CDN (load early sebelum ad scripts) -->
+<script src="https://cdn.jsdelivr.net/npm/plyr@3.7.8/dist/plyr.js"></script>
+
+
+<style>
+/* ============================================
+   GLOBAL RESET & PERFORMANCE STYLES
+   ============================================ */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  width: 100%;
+  min-height: 100vh;
+  background: #090714;
+  color: #fff;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Standalone Page Wrapper */
+.standalone-page-wrapper {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 15px 10px;
+}
+
+/* Embedded Mode: Fullscreen Pure Player */
+body.is-embedded-mode {
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  height: 100vh;
+  height: 100dvh;
+}
+
+body.is-embedded-mode .standalone-page-wrapper {
+  padding: 0;
+  height: 100%;
+  justify-content: center;
+}
+
+body.is-embedded-mode .content-slot-header,
+body.is-embedded-mode .content-slot-footer {
+  display: none !important;
+}
+
+/* ============================================
+   HEADER & FOOTER LONG CONTENT SLOTS (728x90)
+   (Only displayed in Standalone Mode)
+   ============================================ */
+.content-slot-header,
+.content-slot-footer {
+  width: 100%;
+  max-width: 900px;
+  background: #14112c;
+  border-radius: 12px;
+  padding: 12px;
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  margin: 10px 0;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.slot-banner-frame {
+  width: 100%;
+  min-height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0d0a20;
+  border-radius: 8px;
+  padding: 8px;
+  overflow: hidden;
+}
+
+/* ============================================
+   RUNNING TEXT BAR (Teks Berjalan)
+   ============================================ */
+.running-text-bar {
+  width: 100%;
+  max-width: 900px;
+  margin: 8px 0;
+  background: linear-gradient(135deg, #0d0a20 0%, #130e28 50%, #0d0a20 100%);
+  border: 2px solid transparent;
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+  padding: 2px;
+  /* Glow border animasi */
+  box-shadow:
+    0 0 8px rgba(249,115,22,0.6),
+    0 0 20px rgba(249,115,22,0.25),
+    inset 0 0 10px rgba(99,102,241,0.08);
+  animation: glowBorder 2.5s ease-in-out infinite alternate;
+}
+
+/* Sembunyikan di mode iframe/embed */
+body.is-embedded-mode .running-text-bar { display: none !important; }
+
+@keyframes glowBorder {
+  0%   { box-shadow: 0 0 8px rgba(249,115,22,0.5), 0 0 20px rgba(249,115,22,0.2); }
+  100% { box-shadow: 0 0 14px rgba(249,115,22,0.9), 0 0 35px rgba(249,115,22,0.45), 0 0 8px rgba(99,102,241,0.4); }
+}
+
+.running-text-track {
+  display: flex;
+  white-space: nowrap;
+  padding: 12px 0;
+  /* Animasi gerak teks */
+  animation: scrollText 22s linear infinite;
+}
+
+.running-text-track:hover {
+  animation-play-state: paused; /* Berhenti saat mouse hover */
+}
+
+@keyframes scrollText {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.running-text-content {
+  display: inline-block;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  padding-right: 40px;
+  /* Teks gradient warna-warni */
+  background: linear-gradient(
+    90deg,
+    #fbbf24 0%,
+    #f97316 20%,
+    #ef4444 38%,
+    #fbbf24 55%,
+    #f97316 75%,
+    #ef4444 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmerText 3s linear infinite;
+  /* Text shadow fallback untuk browser tanpa clip support */
+  filter: drop-shadow(0 0 4px rgba(249,115,22,0.5));
+}
+
+@keyframes shimmerText {
+  0%   { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+
+@media (max-width: 640px) {
+  .running-text-content { font-size: 0.92rem; }
+  .running-text-track { padding: 10px 0; }
+}
+
+/* Neutral Placeholder Box */
+
+.neutral-placeholder-banner {
+  width: 100%;
+  min-height: 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #070512;
+  border: 1px dashed rgba(168, 85, 247, 0.35);
+  border-radius: 6px;
+  padding: 10px;
+  text-align: center;
+}
+
+.placeholder-title-label {
+  color: #c084fc;
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.placeholder-guide-text {
+  color: #94a3b8;
+  font-size: 11px;
+}
+
+/* ============================================
+   MEDIA STAGE WRAPPER (CENTER PLAYER)
+   ============================================ */
+.media-stage-wrapper {
+  width: 100%;
+  max-width: 900px;
+  height: 520px;
+  max-height: 70vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+  position: relative;
+  overflow: hidden;
+  border-radius: 14px;
+  border: 1px solid rgba(168, 85, 247, 0.3);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+}
+
+body.is-embedded-mode .media-stage-wrapper {
+  max-width: 100vw;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  max-height: 100dvh;
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
+}
+
+#video-player {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  background: #000;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: center center;
+}
+
+.embed-render-frame {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background: #000;
+}
+
+.embed-render-frame iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* ============================================
+   CENTER PLAYER BANNER OVERLAY (728x90)
+   (Menutupi tombol play di tengah player)
+   ============================================ */
+.center-player-ad-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2200;
+  background: rgba(13, 10, 32, 0.95);
+  border: 1.5px solid rgba(168, 85, 247, 0.6);
+  border-radius: 12px;
+  padding: 8px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+  animation: fadeInCenterBanner 0.3s ease;
+}
+
+@keyframes fadeInCenterBanner {
+  from { opacity: 0; transform: translate(-50%, -48%); }
+  to { opacity: 1; transform: translate(-50%, -50%); }
+}
+
+.center-ad-content-box {
+  width: 728px;
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 6px;
+  background: #000;
+}
+
+.center-ad-close-btn {
+  position: absolute;
+  top: -12px;
+  right: -12px;
+  background: #ef4444;
+  color: #ffffff;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  font-weight: 900;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  line-height: 1;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.7);
+  z-index: 2210;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.center-ad-close-btn:hover {
+  transform: scale(1.15);
+  background: #dc2626;
+}
+
+/* Responsif: Menyesuaikan skala banner 728x90 agar pas di layar tablet & smartphone */
+@media (max-width: 768px) {
+  .center-player-ad-overlay {
+    transform: translate(-50%, -50%) scale(0.68);
+    transform-origin: center center;
+  }
+  .center-ad-close-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 18px;
+    top: -16px;
+    right: -16px;
+  }
+}
+
+@media (max-width: 520px) {
+  .center-player-ad-overlay {
+    transform: translate(-50%, -50%) scale(0.48);
+    transform-origin: center center;
+  }
+  .center-ad-close-btn {
+    width: 44px;
+    height: 44px;
+    font-size: 22px;
+    top: -20px;
+    right: -20px;
+  }
+}
+
+@media (max-width: 380px) {
+  .center-player-ad-overlay {
+    transform: translate(-50%, -50%) scale(0.42);
+    transform-origin: center center;
+  }
+  .center-ad-close-btn {
+    width: 48px;
+    height: 48px;
+    font-size: 24px;
+    top: -22px;
+    right: -22px;
+  }
+}
+
+/* Sembunyikan & kunci bar kontrol (Play bawah-kiri, Fullscreen, dll) selama baner tengah aktif */
+.media-stage-wrapper.ad-banner-locked .plyr__controls {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.media-stage-wrapper.ad-banner-locked .plyr__control--overlaid,
+.media-stage-wrapper.ad-banner-locked .plyr__video-wrapper,
+.media-stage-wrapper.ad-banner-locked video,
+.media-stage-wrapper.ad-banner-locked #embedRenderFrame {
+  pointer-events: none !important;
+}
+
+/* ============================================
+   IN-VIDEO CONTAINER SLOT (KHUSUS SUMBER X / TWITTER)
+   ============================================ */
+.in-player-content-card {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2100;
+  background: rgba(15, 23, 42, 0.95);
+  border: 1px solid rgba(168, 85, 247, 0.5);
+  border-radius: 12px;
+  padding: 12px 16px;
+  width: 90%;
+  max-width: 420px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9);
+  display: none;
+  text-align: center;
+  animation: fadeInCard 0.4s ease;
+}
+
+.in-player-content-card.show-for-x {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.in-player-close-btn {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+@keyframes fadeInCard {
+  from { opacity: 0; transform: translate(-50%, 15px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+/* ============================================
+   PLYR THEME & CONTROLS CUSTOMIZATION
+   ============================================ */
+.plyr {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  --plyr-color-main: #a855f7;
+  --plyr-video-background: #000;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.plyr video {
+  object-fit: contain !important;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.plyr__controls {
+  background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.85) 100%);
+  padding: 10px 15px;
+}
+
+.plyr__control {
+  color: #fff;
+  transition: all 0.2s ease;
+}
+
+.plyr__control:hover {
+  background: rgba(168, 85, 247, 0.3);
+}
+
+.plyr__control--overlaid {
+  background: rgba(168, 85, 247, 0.8);
+  border-radius: 50%;
+  width: 70px;
+  height: 70px;
+}
+
+.plyr__control--overlaid:hover {
+  background: rgba(168, 85, 247, 1);
+  transform: scale(1.1);
+}
+
+/* Hide Volume Slider (Keep Mute Button) */
+.plyr__volume input[data-plyr="volume"],
+.plyr__volume input[type="range"] { 
+  display: none !important; 
+}
+
+/* Hide Duration */
+.plyr__time--duration { display: none !important; }
+
+/* Hide PiP button by default */
+.plyr__controls [data-plyr="pip"] { display: none !important; }
+
+/* Show PiP button ONLY when fullscreen is active */
+.plyr--fullscreen-active .plyr__controls [data-plyr="pip"] {
+  display: inline-flex !important;
+  background: rgba(168, 85, 247, 0.3) !important;
+  border-radius: 6px;
+  padding: 8px 12px !important;
+  margin-left: 8px;
+  transition: all 0.2s ease;
+}
+
+/* Custom Action Buttons in Plyr Control Bar */
+.plyr__controls #custom-rotate-trigger,
+.plyr__controls #custom-download-trigger {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  color: white !important;
+  font-size: 13px;
+  padding: 8px 12px !important;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-left: 8px;
+  border: none;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.plyr__controls #custom-rotate-trigger {
+  background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%) !important;
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
+}
+
+.plyr__controls #custom-rotate-trigger:hover {
+  background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%) !important;
+  transform: translateY(-2px);
+}
+
+.plyr__controls #custom-download-trigger {
+  background: linear-gradient(135deg, #00b3ff 0%, #0095d9 100%) !important;
+  box-shadow: 0 2px 8px rgba(0, 179, 255, 0.3);
+}
+
+.plyr__controls #custom-download-trigger:hover {
+  background: linear-gradient(135deg, #0095d9 0%, #0077b3 100%) !important;
+  transform: translateY(-2px);
+}
+
+#custom-rotate-trigger svg,
+#custom-download-trigger svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+  margin-right: 5px;
+}
+
+#custom-rotate-trigger span,
+#custom-download-trigger span { display: none; }
+@media (min-width: 768px) {
+  #custom-rotate-trigger span,
+  #custom-download-trigger span { display: inline; }
+}
+
+/* ============================================
+   ROTATION TOAST NOTIFICATION BADGE
+   ============================================ */
+.rotation-toast-badge {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(15, 23, 42, 0.92);
+  border: 1px solid rgba(168, 85, 247, 0.5);
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  z-index: 2500;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rotation-toast-badge.show { opacity: 1; }
+
+/* ============================================
+   NEUTRAL DIALOG: SYSTEM STATUS / ACCESS GATE
+   ============================================ */
+.system-status-layer {
+  position: fixed;
+  inset: 0;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #090714;
+  z-index: 3000;
+  text-align: center;
+  padding: 30px 20px;
+}
+
+.system-status-layer .status-icon {
+  font-size: 50px;
+  margin-bottom: 16px;
+}
+
+.system-status-layer h2 {
+  font-size: 24px;
+  margin: 0 0 10px 0;
+  color: #f093fb;
+  font-weight: 700;
+}
+
+.system-status-layer p {
+  font-size: 14px;
+  color: #cbd5e1;
+  margin: 0 0 15px 0;
+  max-width: 500px;
+  line-height: 1.5;
+}
+
+.system-status-layer button {
+  background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%);
+  color: white;
+  border: none;
+  padding: 12px 28px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+/* ============================================
+   NEUTRAL DIALOG: MEDIA PAUSE MODAL
+   ============================================ */
+.media-pause-view {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 3000;
+  background: #14112c;
+  border-radius: 16px;
+  padding: 25px 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.95);
+  display: none;
+  max-width: 90%;
+  width: 380px;
+  border: 1px solid rgba(168, 85, 247, 0.4);
+  text-align: center;
+}
+
+.media-pause-view.active-visible {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  animation: modalFadeIn 0.3s ease;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; transform: translate(-50%, -46%); }
+  to { opacity: 1; transform: translate(-50%, -50%); }
+}
+
+.media-pause-view .dialog-close-trigger {
+  position: absolute;
+  top: -12px;
+  right: -12px;
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  transition: all 0.2s;
+}
+
+.media-pause-view .dialog-close-trigger:hover {
+  transform: scale(1.1);
+  background: #dc2626;
+}
+
+.dialog-surface-card {
+  width: 100%;
+  min-height: 220px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #0d0a20;
+  border-radius: 12px;
+  padding: 15px;
+  border: 1px dashed rgba(168, 85, 247, 0.4);
+}
+
+/* ============================================
+   LOADING STATE
+   ============================================ */
+.initial-verify-layer {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 5000;
+  text-align: center;
+  color: #cbd5e1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.spinner-indicator {
+  width: 42px;
+  height: 42px;
+  border: 3px solid rgba(168, 85, 247, 0.2);
+  border-top-color: #a855f7;
+  border-radius: 50%;
+  animation: spinCircle 1s linear infinite;
+  margin-bottom: 12px;
+}
+
+@keyframes spinCircle { to { transform: rotate(360deg); } }
+
+/* Hide native download button */
+video::-webkit-media-controls-download-button { display: none !important; }
+video::-webkit-media-controls-enclosure { overflow: hidden; }
+
+@media (max-width: 768px) {
+  .media-stage-wrapper {
+    height: 380px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- 1. INITIAL VERIFICATION / LOADING -->
+<div class="initial-verify-layer" id="initialVerifyLayer">
+  <div class="spinner-indicator"></div>
+  <p>Memuat pemutar media...</p>
+</div>
+
+<!-- 2. ACCESS GATE / SYSTEM STATUS NOTICE -->
+<div class="system-status-layer" id="systemStatusLayer">
+  <div class="status-icon">🛡️</div>
+  <h2>Layanan Terhenti</h2>
+  <p>Mohon pastikan pemblokir konten dinonaktifkan agar pemutar dapat berjalan normal.</p>
+  <button onclick="location.reload()">🔄 Muat Ulang Pemutar</button>
+</div>
+
+<!-- 3. STANDALONE PAGE LAYOUT WRAPPER -->
+<div class="standalone-page-wrapper">
+  
+  <!-- SLOT IKLAN PANJANG ATAS (HEADER 728x90) - HANYA TAMPIL DI MODE MANDIRI -->
+  <div class="content-slot-header" id="slotHeaderBanner">
+    <div class="slot-banner-frame">
+      <script>
+        atOptions = {
+          'key' : '9a3cf3a3967a4e3fc2e4fdf6b9a3489f',
+          'format' : 'iframe',
+          'height' : 90,
+          'width' : 728,
+          'params' : {}
+        };
+      </script>
+      <script src="https://www.highrevenueformat.com/9a3cf3a3967a4e3fc2e4fdf6b9a3489f/invoke.js"></script>
+    </div>
+  </div>
+
+  <!-- ═══ TEKS BERJALAN / RUNNING TEXT ═══ -->
+  <!-- ✏️ EDIT TEKS DI BAWAH INI SESUAI KEBUTUHAN -->
+  <div class="running-text-bar" id="runningTextBar">
+    <div class="running-text-track">
+      <span class="running-text-content">
+        ⚠️&nbsp; TULIS PESAN KAMU DI SINI &nbsp;|&nbsp; ⚠️&nbsp; TULIS PESAN KAMU DI SINI &nbsp;|&nbsp; ⚠️&nbsp; TULIS PESAN KAMU DI SINI &nbsp;|&nbsp; ⚠️&nbsp; TULIS PESAN KAMU DI SINI &nbsp;|&nbsp; ⚠️&nbsp; TULIS PESAN KAMU DI SINI &nbsp;|&nbsp;
+      </span>
+      <!-- Duplikat untuk efek sambung tanpa jeda -->
+      <span class="running-text-content" aria-hidden="true">
+        ⚠️&nbsp; TULIS PESAN KAMU DI SINI &nbsp;|&nbsp; ⚠️&nbsp; TULIS PESAN KAMU DI SINI &nbsp;|&nbsp; ⚠️&nbsp; TULIS PESAN KAMU DI SINI &nbsp;|&nbsp; ⚠️&nbsp; TULIS PESAN KAMU DI SINI &nbsp;|&nbsp; ⚠️&nbsp; TULIS PESAN KAMU DI SINI &nbsp;|&nbsp;
+      </span>
+    </div>
+  </div>
+
+  <!-- CENTER MEDIA STAGE -->
+  <div class="media-stage-wrapper ad-banner-locked" id="mediaStageWrapper" style="display: none;">
+    <!-- Rotation Toast Badge -->
+    <div class="rotation-toast-badge" id="rotationToast">
+      <span>🔄</span>
+      <span id="rotationToastText">Rotasi: 0°</span>
+    </div>
+
+    <!-- Video Player (MP4) -->
+    <video id="video-player" referrerpolicy="no-referrer-when-downgrade" playsinline preload="none" style="display: none;">
+      Browser Anda tidak mendukung pemutar video ini.
+    </video>
+
+    <!-- Embed Frame Container -->
+    <div class="embed-render-frame" id="embedRenderFrame" style="display: none;"></div>
+
+    <!-- BANNER TENGAH MEDIA PLAYER (MENUTUPI TOMBOL PLAY DI TENGAH) -->
+    <div class="center-player-ad-overlay" id="centerPlayerAdBanner">
+      <button class="center-ad-close-btn" onclick="closeCenterPlayerBanner(event)" title="Tutup Iklan">✕</button>
+      <div class="center-ad-content-box">
+        <script>
+          atOptions = {
+            'key' : '6a924da8ad9a102ff531ac8e20adca62',
+            'format' : 'iframe',
+            'height' : 90,
+            'width' : 728,
+            'params' : {}
+          };
+        </script>
+        <script src="https://www.highrevenueformat.com/6a924da8ad9a102ff531ac8e20adca62/invoke.js"></script> 
+      </div>
+    </div>
+
+    <!-- SLOT IKLAN DI DALAM CONTAINER VIDEO KHUSUS SUMBER X (TWITTER) -->
+    <div class="in-player-content-card" id="inPlayerCardX">
+      <button class="in-player-close-btn" onclick="closeInPlayerCardX()" title="Tutup">✕</button>
+      <script>
+        atOptions = {
+          'key' : '1889be24d471415252bdf847db2a781a',
+          'format' : 'iframe',
+          'height' : 250,
+          'width' : 300,
+          'params' : {}
+        };
+      </script>
+      <script src="https://www.highrevenueformat.com/1889be24d471415252bdf847db2a781a/invoke.js"></script>
+    </div>
+  </div>
+
+  <!-- SLOT IKLAN PANJANG BAWAH (FOOTER 728x90) - HANYA TAMPIL DI MODE MANDIRI -->
+  <div class="content-slot-footer" id="slotFooterBanner">
+    <div class="slot-banner-frame">
+      <script>
+        atOptions = {
+          'key' : '9a3cf3a3967a4e3fc2e4fdf6b9a3489f',
+          'format' : 'iframe',
+          'height' : 90,
+          'width' : 728,
+          'params' : {}
+        };
+      </script>
+      <script src="https://www.highrevenueformat.com/9a3cf3a3967a4e3fc2e4fdf6b9a3489f/invoke.js"></script>
+    </div>
+  </div>
+
+</div>
+
+<!-- 4. NEUTRAL MEDIA PAUSE DIALOG (Zero-Ad-Class) -->
+<div class="media-pause-view" id="mediaPauseView">
+  <button class="dialog-close-trigger" onclick="closePauseDialog()" aria-label="Tutup">×</button>
+  <div class="dialog-surface-card">
+    <script>
+      atOptions = {
+        'key' : '1889be24d471415252bdf847db2a781a',
+        'format' : 'iframe',
+        'height' : 250,
+        'width' : 300,
+        'params' : {}
+      };
+    </script>
+    <script src="https://www.highrevenueformat.com/1889be24d471415252bdf847db2a781a/invoke.js"></script>
+    <p style="color:#94a3b8; font-size:12px; margin-top:12px;">Klik tombol Play untuk melanjutkan pemutaran</p>
+  </div>
+</div>
+
+
+
+<script>
+// ============================================
+// 1. CONFIGURATION & SECRET KEY
+// ============================================
+const CONFIG = {
+  encryptionKey: '112233', // 🔐 Kunci Enkripsi Rahasia
+  enableAdblockGate: false,
+  smartlinks: [
+    "https://www.profitableratecpmnetwork.com/cb53k6wcm8?key=7eed13583d3d505b1aa241e65deb6fb7",
+    "https://www.profitableratecpmnetwork.com/bb1ic94xj9?key=7cee48daf3ca4dbf1a9ac037bf4a08d5"
+  ],
+  getRandomSmartlink() {
+    if (!this.smartlinks || this.smartlinks.length === 0) return '';
+    return this.smartlinks[Math.floor(Math.random() * this.smartlinks.length)];
+  }
+};
+
+// ============================================
+// 2. CONTEXT DETECTOR (STANDALONE VS EMBEDDED IFRAME)
+// ============================================
+function isRunningInsideIframe() {
+  try {
+    return window.self !== window.top;
+  } catch (e) {
+    return true;
+  }
+}
+
+if (isRunningInsideIframe()) {
+  document.body.classList.add('is-embedded-mode');
+}
+
+// ============================================
+// 3. ENCRYPTION & DECRYPTION UTILITY (XOR + UTF-8 SAFE)
+// ============================================
+function encryptPayload(text) {
+  if (!text) return '';
+  const encodedURI = encodeURIComponent(text);
+  let result = '';
+  for (let i = 0; i < encodedURI.length; i++) {
+    result += String.fromCharCode(
+      encodedURI.charCodeAt(i) ^ CONFIG.encryptionKey.charCodeAt(i % CONFIG.encryptionKey.length)
+    );
+  }
+  return btoa(result);
+}
+
+function decryptPayload(encrypted) {
+  if (!encrypted) return null;
+  try {
+    const decoded = atob(decodeURIComponent(encrypted));
+    let result = '';
+    for (let i = 0; i < decoded.length; i++) {
+      result += String.fromCharCode(
+        decoded.charCodeAt(i) ^ CONFIG.encryptionKey.charCodeAt(i % CONFIG.encryptionKey.length)
+      );
+    }
+    return JSON.parse(decodeURIComponent(result));
+  } catch (e) {
+    try {
+      return JSON.parse(decodeURIComponent(atob(decodeURIComponent(encrypted))));
+    } catch (err) {
+      console.error('Decryption failed:', err);
+      return null;
+    }
+  }
+}
+
+// ============================================
+// 4. SMART SOURCE ANALYZER & DYNAMIC AGGRESSIVENESS
+// ============================================
+let clickThreshold = 3;
+let smartlinkCooldownMs = 3000;
+let smartlinkToleranceClicks = 0;
+let detectedSourceType = 'default';
+
+function analyzeMediaSource(mediaData) {
+  const contentString = (
+    (mediaData.src || '') + ' ' + 
+    (mediaData.html || '') + ' ' + 
+    (mediaData.raw_url || '') + ' ' +
+    (mediaData.source_type || '')
+  ).toLowerCase();
+
+  // Reset hitungan klik untuk video saat ini (reset toleransi ke 0)
+  playerClickCount = 0;
+  lastSmartlinkTriggerTime = 0;
+
+  // 1. Deteksi Sumber X (Twitter)
+  if (contentString.includes('twitter.com') || contentString.includes('x.com') || contentString.includes('twimg.com')) {
+    detectedSourceType = 'x_twitter';
+    clickThreshold = 2; // Agresif: trigger setiap 2 klik (1, 3, 5...)
+    smartlinkCooldownMs = 2500;
+    smartlinkToleranceClicks = 0;
+    
+    // Tampilkan In-Player Ad khusus X
+    const inPlayerCard = document.getElementById('inPlayerCardX');
+    if (inPlayerCard) inPlayerCard.classList.add('show-for-x');
+    return;
+  }
+
+  // 2. Deteksi Server Pihak Ketiga (Doodstream, Videy, Vidoy, Streamwish, Streamtape, dll)
+  if (
+    mediaData.source_type === 'third_party' ||
+    contentString.includes('dood') || 
+    contentString.includes('videy') || 
+    contentString.includes('vidoy') ||
+    contentString.includes('streamwish') || 
+    contentString.includes('strwish') ||
+    contentString.includes('wishembed') ||
+    contentString.includes('streamtape') ||
+    contentString.includes('voe') ||
+    contentString.includes('filelions') ||
+    contentString.includes('lulustream') ||
+    contentString.includes('mixdrop') ||
+    contentString.includes('upstream') ||
+    contentString.includes('mp4upload') ||
+    contentString.includes('hexupload') ||
+    contentString.includes('krakenfiles') ||
+    contentString.includes('dropload')
+  ) {
+    detectedSourceType = 'third_party';
+    smartlinkToleranceClicks = 4; // Berikan toleransi 4 klik pertama bebas popup
+    clickThreshold = 5; // Mulai berpeluang terpicu pada klik ke-5
+    smartlinkCooldownMs = 8000; // Cooldown panjang agar tidak bentrok dengan popup server
+    
+    // Pastikan in-player card X disembunyikan
+    const inPlayerCard = document.getElementById('inPlayerCardX');
+    if (inPlayerCard) inPlayerCard.style.display = 'none';
+    return;
+  }
+
+  // 3. Deteksi Sumber YouTube atau MP4 Direct Milik Sendiri
+  if (contentString.includes('youtube.com') || contentString.includes('youtu.be') || mediaData.type === 'mp4') {
+    detectedSourceType = 'trusted_clean';
+    clickThreshold = 3; // Agresif sedang: trigger setiap 3 klik (1, 4, 7...)
+    smartlinkCooldownMs = 3000;
+    smartlinkToleranceClicks = 0;
+    return;
+  }
+
+  // Default
+  detectedSourceType = 'default';
+  clickThreshold = 4;
+  smartlinkCooldownMs = 4000;
+  smartlinkToleranceClicks = 0;
+}
+
+function closeInPlayerCardX() {
+  const card = document.getElementById('inPlayerCardX');
+  if (card) card.style.display = 'none';
+}
+
+let isBannerActive = true;
+let keepVideoPlayingOnRespawn = false;
+let bannerRespawnTimer = null;
+// ⏱️ PENGATURAN INTERVAL RESPAWN BERJANGKA (dalam detik):
+// Tahap 1: 30 detik | Tahap 2: 60 detik | Tahap 3: 120 detik, dst.
+const BANNER_RESPAWN_STAGES_SEC = [30, 60, 120]; 
+const BANNER_MAX_RESPAWN_SEC = 300; // Batas maksimal jeda (300 detik / 5 menit)
+let bannerCloseCount = 0; // Menghitung berapa kali penonton sudah menutup baner
+
+function getNextRespawnDelayMs() {
+  let delaySec;
+  if (bannerCloseCount < BANNER_RESPAWN_STAGES_SEC.length) {
+    delaySec = BANNER_RESPAWN_STAGES_SEC[bannerCloseCount];
+  } else {
+    // Dan seterusnya: otomatis menggandakan durasi sampai batas maksimal
+    const lastStageSec = BANNER_RESPAWN_STAGES_SEC[BANNER_RESPAWN_STAGES_SEC.length - 1];
+    const stepsBeyond = bannerCloseCount - BANNER_RESPAWN_STAGES_SEC.length + 1;
+    delaySec = Math.min(lastStageSec * Math.pow(2, stepsBeyond), BANNER_MAX_RESPAWN_SEC);
+  }
+  return delaySec * 1000;
+}
+
+function scheduleBannerRespawn(delayMs) {
+  if (bannerRespawnTimer) clearTimeout(bannerRespawnTimer);
+  bannerRespawnTimer = setTimeout(() => {
+    respawnCenterPlayerBanner();
+  }, delayMs);
+}
+
+function respawnCenterPlayerBanner() {
+  const banner = document.getElementById('centerPlayerAdBanner');
+  const stage = document.getElementById('mediaStageWrapper');
+  if (!banner || !stage) return;
+
+  // Deteksi apakah pengunjung sedang menonton dalam mode Fullscreen
+  const isFullscreen = !!(
+    document.fullscreenElement || 
+    document.webkitFullscreenElement || 
+    document.mozFullScreenElement || 
+    document.msFullscreenElement ||
+    (typeof plyrInstance !== 'undefined' && plyrInstance && plyrInstance.fullscreen && plyrInstance.fullscreen.active)
+  );
+
+  // 1. Set status baner kembali aktif
+  isBannerActive = true;
+
+  // 2. Kunci bar kontrol pemutar (agar penonton tidak bisa langsung fullscreen lagi sebelum klik x)
+  stage.classList.add('ad-banner-locked');
+
+  // 3. Tampilkan kembali baner iklan di tengah layar
+  banner.style.display = 'flex';
+
+  // 4. Jika sedang menonton dalam mode Fullscreen: Keluarkan dari mode Fullscreen, dan JANGAN DI-PAUSE!
+  if (isFullscreen) {
+    keepVideoPlayingOnRespawn = true;
+    try {
+      if (typeof plyrInstance !== 'undefined' && plyrInstance && plyrInstance.fullscreen && plyrInstance.fullscreen.active) {
+        plyrInstance.fullscreen.exit();
+      } else if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement) {
+        if (document.exitFullscreen) document.exitFullscreen();
+        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+        else if (document.mozCancelFullScreen) document.mozCancelFullScreen();
+        else if (document.msExitFullscreen) document.msExitFullscreen();
+      }
+    } catch (err) {}
+    // Video tetap berputar terus (tidak di-pause) sehingga pengunjung langsung melihat iklannya
+  } else {
+    keepVideoPlayingOnRespawn = false;
+    // Jika tidak sedang Fullscreen, jeda (pause) video saat baner muncul kembali
+    try {
+      if (typeof plyrInstance !== 'undefined' && plyrInstance) {
+        plyrInstance.pause();
+      } else {
+        const video = document.getElementById('video-player');
+        if (video && !video.paused) video.pause();
+      }
+    } catch (err) {}
+  }
+}
+
+function closeCenterPlayerBanner(e) {
+  if (e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
+  isBannerActive = false;
+  keepVideoPlayingOnRespawn = false;
+
+  // Buka kunci kontrol player (tampilkan bar kontrol, tombol play bawah & fullscreen)
+  const stage = document.getElementById('mediaStageWrapper');
+  if (stage) {
+    stage.classList.remove('ad-banner-locked');
+  }
+
+  // Tutup baner di tengah media player
+  const banner = document.getElementById('centerPlayerAdBanner');
+  if (banner) {
+    banner.style.display = 'none';
+  }
+
+  // Dapatkan durasi jeda berjangka untuk respawn berikutnya (30s -> 60s -> 120s, dst)
+  const nextDelayMs = getNextRespawnDelayMs();
+  bannerCloseCount++;
+
+  // Jadwalkan baner untuk respawn berikutnya
+  scheduleBannerRespawn(nextDelayMs);
+
+  // Jika video sebelumnya sedang ditonton, lanjutkan pemutaran secara otomatis
+  try {
+    const video = document.getElementById('video-player');
+    if (video && video.currentTime > 0) {
+      if (typeof plyrInstance !== 'undefined' && plyrInstance) {
+        plyrInstance.play().catch(() => {});
+      } else {
+        video.play().catch(() => {});
+      }
+    }
+  } catch (err) {}
+
+  // Dapatkan tautan smartlink yang terpasang
+  let targetSmartlink = '';
+  if (typeof CONFIG !== 'undefined') {
+    if (typeof CONFIG.getRandomSmartlink === 'function') {
+      targetSmartlink = CONFIG.getRandomSmartlink();
+    } else if (CONFIG.smartlinks && CONFIG.smartlinks.length > 0) {
+      targetSmartlink = CONFIG.smartlinks[0];
+    } else if (CONFIG.smartlink) {
+      targetSmartlink = CONFIG.smartlink;
+    }
+  }
+  if (!targetSmartlink) {
+    targetSmartlink = 'https://www.profitableratecpmnetwork.com/cb53k6wcm8?key=7eed13583d3d505b1aa241e65deb6fb7';
+  }
+
+  // Buka smartlink di tab baru atau redirect jika diblokir
+  try {
+    const pop = window.open(targetSmartlink, '_blank');
+    if (!pop || pop.closed || typeof pop.closed === 'undefined') {
+      window.location.href = targetSmartlink;
+    }
+  } catch (err) {
+    window.location.href = targetSmartlink;
+  }
+}
+
+// Blokir tombol keyboard (Spasi, K, F) untuk play/fullscreen selama baner aktif
+document.addEventListener('keydown', (e) => {
+  if (isBannerActive && (e.code === 'Space' || e.key === ' ' || e.key === 'k' || e.key === 'K' || e.key === 'f' || e.key === 'F')) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+}, true);
+
+// ============================================
+// 5. SMARTLINK CLICK TRIGGER SYSTEM (HYBRID CLICK + 5S TIME WINDOW)
+// ============================================
+let playerClickCount = 0;
+let isCooldownActive = false;
+let lastSmartlinkTriggerTime = 0;
+const TIME_TRIGGER_WINDOW_MS = 5000; // ⏱️ Toleransi Waktu: 5 Detik
+
+function shouldTriggerPopup(count) {
+  if (count <= smartlinkToleranceClicks) {
+    return false; // Dalam masa toleransi awal: klik 1, 2, 3, 4 aman dari popup
+  }
+
+  const now = Date.now();
+  // Jika sudah pernah terpicu dan sudah lewat 5 detik, aktifkan kembali di sentuhan ini!
+  if (lastSmartlinkTriggerTime > 0 && (now - lastSmartlinkTriggerTime) >= TIME_TRIGGER_WINDOW_MS) {
+    return true;
+  }
+
+  const activeCount = count - smartlinkToleranceClicks;
+  return (activeCount - 1) % clickThreshold === 0;
+}
+
+function openBackgroundSmartlink(url) {
+  if (!url || !url.startsWith('http')) return;
+  try {
+    const pop = window.open(url, '_blank');
+    if (pop) {
+      // Usaha memindahkan fokus kembali ke halaman video (Pop-under Desktop)
+      pop.blur();
+      window.focus();
+    }
+  } catch (e) {
+    window.open(url, '_blank', 'noopener,noreferrer');
+  }
+}
+
+document.addEventListener('click', (e) => {
+  // Abaikan klik pada baner tengah agar tidak memicu klik ganda saat menutup baner
+  if (e.target.closest('#centerPlayerAdBanner')) return;
+
+  const isPlayerZone = e.target.closest('#mediaStageWrapper') || 
+                       e.target.closest('.plyr') || 
+                       e.target.closest('video') ||
+                       e.target.closest('#embedRenderFrame');
+
+  if (isPlayerZone) {
+    playerClickCount++;
+    if (shouldTriggerPopup(playerClickCount)) {
+      if (isCooldownActive) return;
+      
+      const targetSmartlink = CONFIG.getRandomSmartlink ? CONFIG.getRandomSmartlink() : (CONFIG.smartlink || '');
+      if (targetSmartlink && targetSmartlink.startsWith('http')) {
+        openBackgroundSmartlink(targetSmartlink);
+        lastSmartlinkTriggerTime = Date.now();
+      }
+      
+      isCooldownActive = true;
+      setTimeout(() => { isCooldownActive = false; }, smartlinkCooldownMs);
+    }
+  }
+}, { passive: true });
+
+// ============================================
+// 6. VIDEO ROTATION ENGINE (0°, 90°, 180°, 270°)
+// ============================================
+let currentRotationDegree = 0;
+
+function rotateVideoOrientation() {
+  currentRotationDegree = (currentRotationDegree + 90) % 360;
+  applyRotationTransform();
+  showRotationToast(currentRotationDegree);
+}
+
+function applyRotationTransform() {
+  const videoEl = document.querySelector('.plyr video') || document.getElementById('video-player');
+  const stage = document.getElementById('mediaStageWrapper');
+  if (!videoEl || !stage) return;
+
+  if (currentRotationDegree === 0) {
+    videoEl.style.transform = 'none';
+    videoEl.style.maxWidth = '100%';
+    videoEl.style.maxHeight = '100%';
+    return;
+  }
+
+  if (currentRotationDegree === 90 || currentRotationDegree === 270) {
+    const stageW = stage.clientWidth;
+    const stageH = stage.clientHeight;
+    const scaleFactor = Math.min(stageW / stageH, stageH / stageW);
+    videoEl.style.transform = `rotate(${currentRotationDegree}deg) scale(${scaleFactor})`;
+  } else if (currentRotationDegree === 180) {
+    videoEl.style.transform = `rotate(180deg)`;
+  }
+}
+
+window.addEventListener('resize', applyRotationTransform);
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'r' || e.key === 'R') {
+    rotateVideoOrientation();
+  }
+});
+
+let toastTimeout = null;
+function showRotationToast(degree) {
+  const toast = document.getElementById('rotationToast');
+  const toastText = document.getElementById('rotationToastText');
+  if (!toast || !toastText) return;
+
+  toastText.textContent = `Rotasi: ${degree}°`;
+  toast.classList.add('show');
+
+  if (toastTimeout) clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => {
+    toast.classList.remove('show');
+  }, 1200);
+}
+
+// ============================================
+// 7. PAUSE DIALOG CONTROLLER
+// ============================================
+function openPauseDialog() {
+  const modal = document.getElementById('mediaPauseView');
+  if (modal) modal.classList.add('active-visible');
+}
+
+function closePauseDialog() {
+  const modal = document.getElementById('mediaPauseView');
+  if (modal) modal.classList.remove('active-visible');
+}
+
+// ============================================
+// 8. PLAYER INITIALIZATION (HYBRID ENGINE)
+// ============================================
+let plyrInstance = null;
+
+// ============================================================
+// PROTOKOL KOMUNIKASI DENGAN WEB WADAH (satu domain)
+// ------------------------------------------------------------
+// Web induk mengirim (saat fs-gate / tombol kontrol):
+//   { colekGate: "pause" | "play" }            <- player milik sendiri
+//   '{"event":"command","func":"pauseVideo"|"playVideo"}'  <- format YouTube
+// Player membalas ke web induk:
+//   { playerReady: true }                      <- player siap
+//   { playerEvent: "ended" | "error" }          <- video selesai / gagal
+// ============================================================
+function kabariWeb(msg) {
+  try { window.parent.postMessage(msg, '*'); } catch (e) {}
+}
+window.addEventListener('message', function(e) {
+  try {
+    if (e.origin !== window.location.origin) return; // hanya dari domain sendiri
+  } catch (err) {}
+  var d = e.data;
+  if (typeof d === 'string') { try { d = JSON.parse(d); } catch (err) { return; } }
+  if (!d || typeof d !== 'object') return;
+  var aksi = '';
+  if (d.colekGate === 'pause' || d.colekGate === 'play') aksi = d.colekGate;
+  else if (d.event === 'command') {
+    if (d.func === 'pauseVideo') aksi = 'pause';
+    else if (d.func === 'playVideo') aksi = 'play';
+  }
+  if (!aksi) return;
+  try {
+    var v = document.getElementById('video-player');
+    var p = (typeof plyrInstance !== 'undefined' && plyrInstance) ? plyrInstance : null;
+    if (aksi === 'pause') { if (p) p.pause(); else if (v) v.pause(); }
+    else { if (p && p.play) p.play(); else if (v && v.play) v.play(); }
+  } catch (err) {}
+});
+
+function initHybridPlayer() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const rawData = urlParams.get('s') || urlParams.get('data');
+  
+  const loadingEl = document.getElementById('initialVerifyLayer');
+  const stageWrapper = document.getElementById('mediaStageWrapper');
+  const statusLayer = document.getElementById('systemStatusLayer');
+
+  if (!rawData) {
+    loadingEl.style.display = 'none';
+    statusLayer.style.display = 'flex';
+    statusLayer.innerHTML = `
+      <div class="status-icon">⚠️</div>
+      <h2>Parameter Media Tidak Ditemukan</h2>
+      <p>Pastikan Anda membuka tautan yang dihasilkan dari halaman generator.</p>
+    `;
+    return;
+  }
+
+  const mediaData = decryptPayload(rawData);
+  if (!mediaData) {
+    loadingEl.style.display = 'none';
+    statusLayer.style.display = 'flex';
+    statusLayer.innerHTML = `
+      <div class="status-icon">❌</div>
+      <h2>Data Media Rusak</h2>
+      <p>Gagal mendekripsi URL. Kunci enkripsi mungkin tidak sesuai.</p>
+    `;
+    return;
+  }
+
+  // Analisis Sumber Media & Atur Agresivitas
+  analyzeMediaSource(mediaData);
+
+  // Tampilkan Media Stage
+  loadingEl.style.display = 'none';
+  stageWrapper.style.display = 'flex';
+
+  if (mediaData.type === 'mp4') {
+    // --- MODE 1: MP4 DIRECT (PLYR) ---
+    const video = document.getElementById('video-player');
+    video.style.display = 'block';
+    video.referrerPolicy = 'no-referrer-when-downgrade';
+    video.muted = true;
+
+    const source = document.createElement('source');
+    source.src = mediaData.src;
+    source.type = 'video/mp4';
+    source.referrerPolicy = 'no-referrer';
+    video.appendChild(source);
+
+    if (mediaData.sub) {
+      const track = document.createElement('track');
+      track.kind = 'subtitles';
+      track.src = mediaData.sub;
+      track.srclang = 'id';
+      track.label = 'Bahasa Indonesia';
+      track.default = true;
+      video.appendChild(track);
+    }
+
+    // Error handling jika video MP4 gagal stream
+    video.onerror = function() {
+      console.warn("Video failed to load from src:", mediaData.src);
+      kabariWeb({ playerEvent: 'error' });
+      const errBox = document.getElementById('systemStatusLayer');
+      if (errBox) {
+        loadingEl.style.display = 'none';
+        errBox.style.display = 'flex';
+        errBox.innerHTML = `
+          <div class="status-icon">⚠️</div>
+          <h2>Video Gagal Dimuat</h2>
+          <p>Pastikan tautan video MP4 masih aktif dan server asal mengizinkan pemutaran lintas domain (CORS).</p>
+          <a href="${mediaData.src}" target="_blank" style="color:#38bdf8; text-decoration:underline; font-size:13px; margin-top:8px;">Buka Link Asli</a>
+        `;
+      }
+    };
+
+    video.addEventListener('play', () => {
+      if (isBannerActive && !keepVideoPlayingOnRespawn) {
+        video.pause();
+      }
+    });
+
+    // FIX HP: beri Plyr kesempatan termuat dulu (maks 8x @ 500ms).
+    // File Plyr kini self-hosted (plyr.js lokal) sehingga normalnya langsung tersedia;
+    // retry ini hanya jaring pengaman di HP dengan jaringan lambat.
+    // Jika tetap tidak ada -> lanjut dan pakai native player (fallback di dalam).
+    window.__plyrTungguN = window.__plyrTungguN || 0;
+    if (typeof Plyr === 'undefined' && window.__plyrTungguN < 8) {
+      window.__plyrTungguN++;
+      setTimeout(lanjutInitHybrid, 500);
+      return;
+    }
+    lanjutInitHybrid();
+
+    function lanjutInitHybrid() {
+    try {
+      if (typeof Plyr !== 'undefined') {
+        // Deteksi Firefox / Zen Browser (Gecko engine)
+        const isFirefox = navigator.userAgent.toLowerCase().includes('firefox') ||
+                          typeof InstallTrigger !== 'undefined';
+
+        // Controls: hilangkan 'pip' dan 'airplay' di Firefox (tidak di-support)
+        const plyrControls = isFirefox
+          ? ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'settings', 'fullscreen']
+          : ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'settings', 'pip', 'fullscreen'];
+
+        plyrInstance = new Plyr(video, {
+          controls: plyrControls,
+          settings: ['captions', 'quality', 'speed'],
+          speed: { selected: 1, options: [0.5, 1, 1.5, 2] },
+          disableContextMenu: true,
+          autoplay: false,
+          muted: true,
+          volume: 1,
+          storage: { enabled: false },
+          // PiP hanya aktif di browser yang support
+          ...(isFirefox ? {} : { pip: { enabled: true } })
+        });
+
+        // Paksa browser load source (penting di Firefox dengan preload="none")
+        video.load();
+        kabariWeb({ playerReady: true });
+
+      } else {
+        // Fallback native: pastikan controls & muted aktif
+        video.controls  = true;
+        video.muted     = true;
+        video.load();
+        kabariWeb({ playerReady: true });
+      }
+    } catch (e) {
+      console.warn('Plyr init fallback:', e);
+      video.controls = true;
+      video.muted    = true;
+      video.load();
+    }
+
+    if (plyrInstance) {
+      // Dynamic PiP Button saat Fullscreen (hanya jika browser support PiP)
+      if (document.pictureInPictureEnabled) {
+        function checkFullscreenForPiP() {
+          const pipBtn = document.querySelector('.plyr__controls [data-plyr="pip"]');
+          const isFull = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement;
+          if (pipBtn) pipBtn.style.display = isFull ? 'inline-flex' : 'none';
+        }
+
+        document.addEventListener('fullscreenchange', checkFullscreenForPiP);
+        document.addEventListener('webkitfullscreenchange', checkFullscreenForPiP);
+        plyrInstance.on('enterfullscreen', checkFullscreenForPiP);
+        plyrInstance.on('exitfullscreen', checkFullscreenForPiP);
+      }
+
+      // Custom Buttons di Bar Kontrol Plyr
+      plyrInstance.on('ready', () => {
+      const controls = document.querySelector('.plyr__controls');
+      if (!controls) return;
+
+      // 1. Tombol Rotasi Video 90°
+      if (!document.getElementById('custom-rotate-trigger')) {
+        const rotateBtn = document.createElement('button');
+        rotateBtn.id = 'custom-rotate-trigger';
+        rotateBtn.className = 'plyr__controls__item plyr__control';
+        rotateBtn.type = 'button';
+        rotateBtn.title = 'Putar Video 90° (Shortcut: Tombol R)';
+        rotateBtn.innerHTML = `
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+          </svg>
+          <span>Rotasi</span>
+        `;
+        rotateBtn.onclick = (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          rotateVideoOrientation();
+        };
+
+        const fullscreenBtn = controls.querySelector('.plyr__control--fullscreen');
+        if (fullscreenBtn) controls.insertBefore(rotateBtn, fullscreenBtn);
+        else controls.appendChild(rotateBtn);
+      }
+
+      // 2. Tombol Download ke Safelink
+      if (!document.getElementById('custom-download-trigger')) {
+        const dlBtn = document.createElement('button');
+        dlBtn.id = 'custom-download-trigger';
+        dlBtn.className = 'plyr__controls__item plyr__control';
+        dlBtn.type = 'button';
+        dlBtn.title = 'Download Video';
+        dlBtn.innerHTML = `
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          <span>Download</span>
+        `;
+        dlBtn.onclick = (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const targetDl = mediaData.src || mediaData.raw_url || '';
+          if (targetDl) {
+            const encryptedSrc = encryptPayload(targetDl);
+            const currentDir = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'));
+            window.open(`${window.location.origin}${currentDir}/safelink1.html#dl=${encodeURIComponent(encryptedSrc)}`, '_blank');
+          } else {
+            alert('Tautan unduhan tidak tersedia untuk media ini.');
+          }
+        };
+
+        const fullscreenBtn = controls.querySelector('.plyr__control--fullscreen');
+        if (fullscreenBtn) controls.insertBefore(dlBtn, fullscreenBtn);
+        else controls.appendChild(dlBtn);
+      }
+      });
+
+      // Kunci pemutaran video jika baner iklan tengah masih aktif (kecuali saat video tetap dibiarkan berjalan setelah keluar dari fullscreen)
+      plyrInstance.on('play', () => {
+        if (isBannerActive && !keepVideoPlayingOnRespawn) {
+          plyrInstance.pause();
+          return;
+        }
+        closePauseDialog();
+      });
+
+      // Pause Dialog Handler
+      plyrInstance.on('pause', () => {
+        if (isBannerActive) return; // Jangan buka modal pause jika baner masih aktif
+        if (!plyrInstance.ended) openPauseDialog();
+      });
+      plyrInstance.on('ended', () => {
+        closePauseDialog();
+        playerClickCount = 0;
+        kabariWeb({ playerEvent: 'ended' });
+      });
+    } // akhir if (plyrInstance)
+    } // akhir lanjutInitHybrid()
+
+  } else if (mediaData.type === 'embed') {
+    // --- MODE 2: UNIVERSAL EMBED (IFRAME/DIRECT URL/SCRIPT) ---
+    const embedFrame = document.getElementById('embedRenderFrame');
+    embedFrame.style.display = 'flex';
+
+    let contentToRender = mediaData.html;
+    if (contentToRender && !contentToRender.startsWith('<') && (contentToRender.startsWith('http://') || contentToRender.startsWith('https://'))) {
+      contentToRender = `<iframe src="${contentToRender}" width="100%" height="100%" frameborder="0" allowfullscreen allow="autoplay; encrypted-media; picture-in-picture"></iframe>`;
+    }
+
+    const fragment = document.createRange().createContextualFragment(contentToRender);
+    embedFrame.appendChild(fragment);
+    kabariWeb({ playerReady: true });
+  }
+
+  // Disable Right Click
+  window.addEventListener('contextmenu', (e) => e.preventDefault());
+}
+
+// Bootstrap
+document.addEventListener('DOMContentLoaded', initHybridPlayer);
+</script>
+
+<!-- // Pasang sosialbar di sini -->
+
+</body>
+</html>

@@ -1,0 +1,1809 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Colek.me - Coli-kiawan</title>
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+  <!-- Font Premium: 'Outfit' & 'Plus Jakarta Sans' -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    /* TEMA UTAMA (DEFAULT): HITAM LEGAM / TRUE AMOLED BLACK */
+    :root {
+      --bg: #000000;
+      --surface: #0e0e10;
+      --text: #f3f4f6;
+      --text-muted: #9ca3af;
+      --box-bg: #121214;
+      --box-border: #2c2d33;
+      --box-text: #888c96;
+      --primary: #f97316;
+      --primary-hover: #ea580c;
+      --btn-bg: #141416;
+      --btn-hover: #222226;
+      --border: #24252a;
+      --shadow: 0 4px 20px rgba(0,0,0,0.9);
+    }
+
+    /* TEMA KEDUA (MODE TERANG) */
+    body.light {
+      --bg: #f7f4ef;
+      --surface: #ffffff;
+      --text: #1f2937;
+      --text-muted: #6b7280;
+      --box-bg: #eae3d9;
+      --box-border: #c9bfb2;
+      --box-text: #786c5e;
+      --primary: #d35400;
+      --primary-hover: #b04a00;
+      --btn-bg: #ffffff;
+      --btn-hover: #fff5eb;
+      --border: #ddd4c8;
+      --shadow: 0 4px 20px rgba(0,0,0,0.06);
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding: 16px 12px;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .main-wrapper {
+      max-width: 820px;
+      margin: 0 auto;
+    }
+
+    /* Header */
+    header {
+      text-align: center;
+      padding: 14px 8px 20px;
+      position: relative;
+    }
+
+    .header-top-bar {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    header h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.1rem;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      color: var(--primary);
+      margin-bottom: 4px;
+      line-height: 1.2;
+    }
+
+    header p {
+      font-family: 'Outfit', sans-serif;
+      color: var(--text-muted);
+      font-size: 0.98rem;
+      font-weight: 500;
+    }
+
+    /* Tombol Pasang Iklan Multi-Color Spektrum */
+    .contact-btn {
+      font-family: 'Outfit', sans-serif;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      background: linear-gradient(
+        135deg,
+        #ff007f 0%,
+        #ff5e00 22%,
+        #ffb700 38%,
+        #00df72 50%,
+        #0070f3 64%,
+        #7928ca 78%,
+        #ff007f 100%
+      );
+      background-size: 300% 300%;
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+      border: 2px solid rgba(255, 255, 255, 0.5);
+      border-radius: 30px;
+      cursor: pointer;
+      box-shadow: 0 0 20px rgba(255, 94, 0, 0.6), 0 0 35px rgba(255, 0, 127, 0.4), 0 0 20px rgba(0, 112, 243, 0.35);
+      animation: spectrumFlow 4s ease infinite, pulseBounce 2s ease-in-out infinite;
+      transition: transform 0.15s, box-shadow 0.15s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .contact-btn:hover {
+      transform: scale(1.06);
+      box-shadow: 0 0 25px rgba(255, 94, 0, 0.9), 0 0 45px rgba(255, 0, 127, 0.7), 0 0 30px rgba(0, 223, 114, 0.6);
+    }
+
+    .contact-btn:active {
+      transform: scale(0.96);
+    }
+
+    .contact-btn .sparkle-icon {
+      font-size: 14px;
+      animation: rotateSparkle 2s linear infinite;
+    }
+
+    .contact-btn::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(60deg, transparent 30%, rgba(255, 255, 255, 0.6) 50%, transparent 70%);
+      transform: rotate(30deg);
+      animation: shimmerBtn 2.5s infinite;
+    }
+
+    @keyframes spectrumFlow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    @keyframes pulseBounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-2px); }
+    }
+
+    @keyframes rotateSparkle {
+      0% { transform: rotate(0deg) scale(1); }
+      50% { transform: rotate(180deg) scale(1.2); }
+      100% { transform: rotate(360deg) scale(1); }
+    }
+
+    @keyframes shimmerBtn {
+      0% { transform: translateX(-100%) rotate(30deg); }
+      20%, 100% { transform: translateX(100%) rotate(30deg); }
+    }
+
+    /* Tombol Ganti Mode */
+    .theme-toggle {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: var(--btn-bg);
+      font-size: 17px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text);
+      transition: all 0.2s;
+    }
+
+    .theme-toggle:hover {
+      background: var(--btn-hover);
+      border-color: var(--primary);
+    }
+
+    /* Stack Vertikal Atas - Bawah */
+    .showcase-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    /* Slot Picture of Main (Banner Iklan) */
+    .picture-of-main {
+      background: var(--box-bg);
+      border: 1px solid var(--box-border);
+      border-radius: 10px;
+      min-height: 90px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 4px;
+      overflow: hidden;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    /* Slot Placeholder Sponsor Interaktif */
+    .sponsor-placeholder-box {
+      cursor: pointer;
+      background: var(--box-bg);
+      border: 2px dashed var(--box-border);
+      border-radius: 10px;
+      min-height: 90px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 14px 12px;
+      color: var(--box-text);
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      transition: all 0.25s ease;
+      user-select: none;
+    }
+
+    .sponsor-placeholder-box:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: rgba(249, 115, 22, 0.08);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(249, 115, 22, 0.2);
+    }
+
+    .sponsor-placeholder-box .sponsor-title {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 0.2px;
+    }
+
+    .sponsor-placeholder-box .sponsor-subtext {
+      font-size: 11px;
+      font-weight: 500;
+      opacity: 0.8;
+      margin-top: 4px;
+      color: var(--text-muted);
+    }
+
+    /* Container Video */
+    .video-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 10px;
+      box-shadow: var(--shadow);
+      margin-bottom: 14px;
+    }
+
+    .video-wrapper {
+      position: relative;
+      width: 100%;
+      padding-bottom: 56.25%;
+      height: 0;
+      background: #000000;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .video-wrapper iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    /* Tombol Next Video */
+    .next-btn {
+      font-family: 'Outfit', sans-serif;
+      display: block;
+      width: 100%;
+      padding: 16px;
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+      font-size: 1.15rem;
+      font-weight: 800;
+      letter-spacing: 0.3px;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(249, 115, 22, 0.35);
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .next-btn:hover {
+      background: var(--primary-hover);
+    }
+
+    .next-btn:active {
+      transform: scale(0.99);
+    }
+
+    footer {
+      font-family: 'Outfit', sans-serif;
+      text-align: center;
+      padding: 26px 8px 12px;
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    /* POP-UP MODAL INTERSTITIAL */
+    .dialog-frame-layer {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 99999;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
+
+    .dialog-frame-layer.active {
+      display: flex;
+    }
+
+    .dialog-backdrop-layer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.88);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+    }
+
+    .dialog-content-wrapper {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 360px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .dialog-surface-card {
+      width: 100%;
+      min-height: 280px;
+      background: #0e0e10;
+      border: 2px solid #ff5e00;
+      border-radius: 16px;
+      box-shadow: 0 10px 45px rgba(255, 94, 0, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      padding: 16px;
+      position: relative;
+    }
+
+    body.light .dialog-surface-card {
+      background: #ffffff;
+      border: 2px solid #d35400;
+    }
+
+    .dialog-inner-canvas {
+      width: 100%;
+      text-align: center;
+      color: #9ca3af;
+      font-family: 'Outfit', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    /* Tombol Close */
+    .dialog-close-trigger {
+      display: none;
+      position: absolute;
+      top: -16px;
+      right: -16px;
+      width: 42px;
+      height: 42px;
+      background: #ff0055;
+      color: #ffffff;
+      border: 3px solid #ffffff;
+      border-radius: 50%;
+      font-size: 18px;
+      font-weight: 900;
+      cursor: pointer;
+      z-index: 3;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 20px rgba(255,0,85,0.7);
+      transition: transform 0.15s, background 0.15s;
+    }
+
+    .dialog-close-trigger.show {
+      display: flex;
+      animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .dialog-close-trigger:hover {
+      background: #d60047;
+      transform: scale(1.1);
+    }
+
+    .dialog-timer-label {
+      margin-top: 14px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #f3f4f6;
+      font-family: 'Outfit', sans-serif;
+      background: #141416;
+      border: 1px solid #24252a;
+      padding: 6px 14px;
+      border-radius: 20px;
+      letter-spacing: 0.2px;
+    }
+
+    /* MODAL CONTACT US */
+    .contact-modal-layer {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 99998;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
+
+    .contact-modal-layer.active {
+      display: flex;
+    }
+
+    .contact-card {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 380px;
+      background: #0e0e10;
+      border: 1px solid #2c2d33;
+      border-radius: 20px;
+      padding: 24px 20px;
+      box-shadow: 0 10px 50px rgba(0,0,0,0.9);
+      font-family: 'Outfit', sans-serif;
+      text-align: center;
+    }
+
+    body.light .contact-card {
+      background: #ffffff;
+      border-color: #ddd4c8;
+    }
+
+    .contact-card h3 {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 6px;
+    }
+
+    .contact-card p {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 18px;
+    }
+
+    .contact-links {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .contact-item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 14px;
+      border-radius: 12px;
+      font-weight: 800;
+      font-size: 15px;
+      text-decoration: none;
+      color: white;
+      border: none;
+      cursor: pointer;
+      width: 100%;
+      transition: transform 0.15s, opacity 0.15s, box-shadow 0.15s;
+    }
+
+    .contact-item:hover {
+      transform: translateY(-2px);
+      opacity: 0.95;
+    }
+
+    .contact-item svg {
+      flex-shrink: 0;
+    }
+
+    .contact-tg {
+      background: linear-gradient(135deg, #0088cc 0%, #00aaff 100%);
+      box-shadow: 0 4px 15px rgba(0, 136, 204, 0.4);
+    }
+
+    .contact-mail {
+      background: linear-gradient(135deg, #ea4335 0%, #ff5e00 100%);
+      box-shadow: 0 4px 15px rgba(234, 67, 53, 0.4);
+    }
+
+    .contact-close-btn {
+      margin-top: 18px;
+      padding: 10px 24px;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .contact-close-btn:hover {
+      color: var(--text);
+      border-color: var(--primary);
+    }
+
+    /* Toast Notifikasi */
+    .toast-msg {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #141416;
+      color: #00df72;
+      border: 1px solid #24252a;
+      padding: 10px 20px;
+      border-radius: 30px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      box-shadow: 0 6px 25px rgba(0,0,0,0.8);
+      z-index: 100000;
+      opacity: 0;
+      transition: all 0.3s ease;
+      pointer-events: none;
+    }
+
+    .toast-msg.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    /* ======= MODAL BANNER TENGAH ======= */
+    .banner-mid-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 99997;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
+    .banner-mid-modal.active { display: flex; }
+
+    .banner-mid-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.82);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+    }
+
+    .banner-mid-card {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 340px;
+      background: #0e0e10;
+      border: 2px solid #f97316;
+      border-radius: 18px;
+      padding: 20px 16px 16px;
+      box-shadow: 0 10px 50px rgba(249,115,22,0.35);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      animation: slideUpIn 0.35s cubic-bezier(0.175,0.885,0.32,1.275);
+    }
+    body.light .banner-mid-card {
+      background: #fff;
+      border-color: #d35400;
+    }
+
+    .banner-mid-label {
+      font-family: 'Outfit', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .banner-mid-ad-wrap {
+      width: 300px;
+      min-height: 250px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .banner-mid-close {
+      font-family: 'Outfit', sans-serif;
+      width: 100%;
+      padding: 10px;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .banner-mid-close:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .banner-mid-timer {
+      font-family: 'Outfit', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    @keyframes slideUpIn {
+      0% { transform: translateY(40px); opacity: 0; }
+      100% { transform: translateY(0); opacity: 1; }
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    /* ======= TEKS BERJALAN / RUNNING TEXT ======= */
+    .running-text-bar {
+      width: 100%;
+      margin: 4px 0 12px;
+      background: linear-gradient(135deg, #0e0e10 0%, #161620 50%, #0e0e10 100%);
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+      box-shadow:
+        0 0 10px rgba(249,115,22,0.55),
+        0 0 24px rgba(249,115,22,0.2),
+        inset 0 0 12px rgba(249,115,22,0.04);
+      animation: rtGlow 2.8s ease-in-out infinite alternate;
+    }
+
+    @keyframes rtGlow {
+      0%   { box-shadow: 0 0 8px rgba(249,115,22,0.45), 0 0 18px rgba(249,115,22,0.18); }
+      100% { box-shadow: 0 0 16px rgba(249,115,22,0.9), 0 0 38px rgba(249,115,22,0.4), 0 0 8px rgba(239,68,68,0.35); }
+    }
+
+    .running-text-track {
+      display: flex;
+      white-space: nowrap;
+      padding: 13px 0;
+      animation: rtScroll 24s linear infinite;
+    }
+
+    .running-text-track:hover {
+      animation-play-state: paused;
+    }
+
+    @keyframes rtScroll {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    .running-text-content {
+      display: inline-block;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      padding-right: 48px;
+      background: linear-gradient(90deg,
+        #fbbf24 0%, #f97316 22%, #ef4444 42%,
+        #fbbf24 58%, #f97316 78%, #ef4444 100%
+      );
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: rtShimmer 3.2s linear infinite;
+      filter: drop-shadow(0 0 5px rgba(249,115,22,0.55));
+    }
+
+    @keyframes rtShimmer {
+      0%   { background-position: 0% center; }
+      100% { background-position: 200% center; }
+    }
+
+    @media (max-width: 640px) {
+      .running-text-content { font-size: 0.95rem; }
+      .running-text-track   { padding: 11px 0; }
+      body { padding: 10px 8px; }
+      header { padding: 8px 4px 14px; }
+      header h1 { font-size: 1.6rem; }
+      header p { font-size: 0.88rem; }
+      .contact-btn { font-size: 11px; padding: 6px 12px; }
+      .theme-toggle { width: 34px; height: 34px; font-size: 15px; }
+      .picture-of-main { min-height: 80px; font-size: 13px; padding: 10px; }
+      .video-card { padding: 6px; margin-bottom: 12px; }
+      .next-btn { font-size: 1rem; padding: 14px; }
+      .dialog-surface-card { min-height: 260px; max-width: 320px; }
+    }
+    /* === BANNER PASANG IKLAN 728x90 (pengganti slot 4) === */
+      .slot-iklan-judol, .slot-iklan-judol * { margin:0; padding:0; box-sizing:border-box; }
+      .slot-iklan-judol {
+        cursor:pointer;
+        width:728px; height:90px; position:relative; overflow:hidden;
+        display:flex; align-items:center; gap:14px; padding:0 20px;
+        font-family:'Outfit','Plus Jakarta Sans',system-ui,-apple-system,sans-serif;
+        border-radius:10px;
+        background:linear-gradient(120deg,#2b0606 0%,#7a1010 30%,#a31414 50%,#7a1010 70%,#2b0606 100%);
+        background-size:300% 300%;
+        border:3px solid #ffd700;
+        box-shadow:0 0 22px rgba(255,215,0,.55), inset 0 0 30px rgba(255,180,0,.28);
+        animation:jiBg 7s ease infinite, jiGlow 1.5s ease-in-out infinite alternate;
+      }
+      @keyframes jiBg { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+      @keyframes jiGlow {
+        from { box-shadow:0 0 14px rgba(255,215,0,.4), inset 0 0 22px rgba(255,180,0,.2); }
+        to   { box-shadow:0 0 30px rgba(255,215,0,.85), inset 0 0 34px rgba(255,180,0,.4); }
+      }
+      /* Lampu kelap-kelip ala papan kasino di bingkai atas & bawah */
+      .slot-iklan-judol::before, .slot-iklan-judol::after {
+        content:''; position:absolute; left:10px; right:10px; height:6px;
+        background-image:radial-gradient(circle, #fff8d0 2.5px, #ffcf3f 3.5px, transparent 4px);
+        background-size:26px 6px; background-repeat:repeat-x;
+        animation:jiLamp 0.9s steps(2) infinite;
+      }
+      .slot-iklan-judol::before { top:4px; }
+      .slot-iklan-judol::after { bottom:4px; animation-delay:0.45s; }
+      @keyframes jiLamp { 0%{opacity:1} 100%{opacity:0.25} }
+
+      .ji-koin { font-size:44px; line-height:1; animation:jiFloat 2.2s ease-in-out infinite; filter:drop-shadow(0 0 6px rgba(255,215,0,.8)); }
+      @keyframes jiFloat { 0%,100%{transform:translateY(0) rotate(-8deg)} 50%{transform:translateY(-7px) rotate(8deg)} }
+
+      .ji-teks { flex:1; text-align:center; }
+      .ji-kecil {
+        display:inline-block; font-size:12px; font-weight:800; letter-spacing:2px; color:#1a0505;
+        background:linear-gradient(180deg,#ffe98a,#ffb700); padding:3px 14px; border-radius:20px;
+        margin-bottom:4px; animation:jiBlink 1.1s steps(2) infinite;
+      }
+      @keyframes jiBlink { 0%{opacity:1} 100%{opacity:0.55} }
+      .ji-besar {
+        font-size:36px; font-weight:900; letter-spacing:1px; line-height:1.05; white-space:nowrap;
+        background:linear-gradient(100deg,#fff3b0 10%,#ffd700 30%,#fffbe0 50%,#ffd700 70%,#fff3b0 90%);
+        background-size:220% auto; -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+        animation:jiShimmer 2.6s linear infinite;
+        filter:drop-shadow(0 2px 0 #7a4d00) drop-shadow(0 0 10px rgba(255,215,0,.55));
+      }
+      @keyframes jiShimmer { 0%{background-position:0% center} 100%{background-position:220% center} }
+
+      .ji-cta {
+        display:flex; flex-direction:column; align-items:stretch; gap:6px; flex-shrink:0;
+      }
+      .ji-tombol {
+        font-size:13px; font-weight:900; letter-spacing:.5px; color:#fff; white-space:nowrap;
+        text-decoration:none; text-align:center; padding:7px 18px; border-radius:20px;
+        border:2px solid rgba(255,255,255,.75); box-shadow:0 4px 14px rgba(0,0,0,.45);
+        animation:jiPulse 1.3s ease-in-out infinite;
+      }
+      .ji-tombol:hover { filter:brightness(1.12); }
+      .ji-tg { background:linear-gradient(180deg,#00aaff,#0088cc); }
+      .ji-mail { background:linear-gradient(180deg,#ff5e00,#d63c00); animation-delay:.65s; }
+      @keyframes jiPulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.07)} }
+      .ji-ukuran { font-size:11px; font-weight:700; letter-spacing:1px; color:#ffdf80; text-align:center; }
+      .slot-4-wrap { display:flex; justify-content:center; }
+      @media (max-width: 760px) {
+        .slot-4-wrap .slot-iklan-judol { transform:scale(.62); transform-origin:center center; margin:-17px 0; }
+      }
+      @media (max-width: 480px) {
+        .slot-4-wrap .slot-iklan-judol { transform:scale(.42); transform-origin:center center; margin:-26px 0; }
+      }
+    /* === GERBANG PASSWORD (pintu masuk situs) === */
+    .pw-gate-layer {
+      position: fixed;
+      inset: 0;
+      z-index: 2147483647;
+      background: radial-gradient(ellipse at center, #141416 0%, #000000 78%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .pw-gate-layer.hidden { display: none; }
+    .pw-gate-card {
+      width: 100%;
+      max-width: 360px;
+      text-align: center;
+      background: #0e0e10;
+      border: 1px solid #2c2d33;
+      border-radius: 20px;
+      padding: 32px 24px;
+      box-shadow: 0 10px 50px rgba(0,0,0,0.9), 0 0 30px rgba(249,115,22,0.12);
+      font-family: 'Outfit', sans-serif;
+      animation: slideUpIn 0.35s cubic-bezier(0.175,0.885,0.32,1.275);
+    }
+    .pw-gate-logo { font-size: 48px; margin-bottom: 10px; }
+    .pw-gate-card h2 {
+      font-size: 26px;
+      font-weight: 900;
+      color: var(--primary);
+      margin-bottom: 6px;
+      letter-spacing: -0.5px;
+    }
+    .pw-gate-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
+    #pw-input {
+      width: 100%;
+      padding: 13px 16px;
+      font-size: 16px;
+      text-align: center;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      letter-spacing: 2px;
+      background: #141416;
+      border: 1px solid #2c2d33;
+      border-radius: 12px;
+      color: #f3f4f6;
+      outline: none;
+      margin-bottom: 12px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    #pw-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(249,115,22,0.25); }
+    #pw-submit {
+      width: 100%;
+      padding: 13px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: 0.3px;
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(249,115,22,0.35);
+      transition: background 0.2s, transform 0.1s;
+    }
+    #pw-submit:hover { background: var(--primary-hover); }
+    #pw-submit:active { transform: scale(0.98); }
+    .pw-error { min-height: 20px; font-size: 13px; font-weight: 700; color: #ef4444; margin-top: 10px; }
+    .pw-blocked-icon { font-size: 48px; margin-bottom: 10px; }
+    .pw-blocked-title { font-size: 20px; font-weight: 800; color: #ef4444; margin-bottom: 8px; }
+    .pw-blocked-desc { font-size: 14px; color: #d1d5db; margin-bottom: 18px; line-height: 1.5; }
+    #pw-retry {
+      padding: 11px 22px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 25px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    #pw-retry:hover { border-color: var(--primary); color: var(--primary); }
+  </style>
+</head>
+<body>
+
+  <!-- ==================== GERBANG PASSWORD ==================== -->
+  <div class="pw-gate-layer" id="pw-gate-layer">
+    <div class="pw-gate-card">
+      <div class="pw-gate-logo">🔐</div>
+      <h2>Colek.me</h2>
+      <p class="pw-gate-sub">Area eksklusif &mdash; masukkan password untuk melanjutkan</p>
+      <div id="pw-form-wrap">
+        <input type="password" id="pw-input" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;" autocomplete="off" maxlength="32">
+        <button id="pw-submit">Masuk &#128275;</button>
+        <div class="pw-error" id="pw-error"></div>
+      </div>
+      <div id="pw-blocked-wrap" style="display:none;">
+        <div class="pw-blocked-icon">&#128737;</div>
+        <div class="pw-blocked-title">Akses Ditahan</div>
+        <div class="pw-blocked-desc">Lepas DNS atau AdBlock untuk dapat mengakses website.</div>
+        <button id="pw-retry">Saya Sudah Melepasnya &#128260;</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Social Bar Adsterra -->
+  <div id="social-bar-wrap">
+    <script src="https://pl31189394.profitableratecpmnetwork.com/55/56/62/5556626abb21c2dfb26bfdaba0348389.js"></script>
+  </div>
+
+  <!-- Toast Notifikasi Global -->
+  <div id="toast-box" class="toast-msg"></div>
+
+  <!-- ==================== MODAL BANNER TENGAH ==================== -->
+  <div class="banner-mid-modal" id="banner-mid-modal">
+    <div class="banner-mid-backdrop"></div>
+    <div class="banner-mid-card">
+      <span class="banner-mid-label">Sponsored</span>
+      <div class="banner-mid-ad-wrap" id="banner-mid-ad-wrap"></div>
+      <div class="banner-mid-timer" id="banner-mid-timer">Tutup dalam 5...</div>
+      <button class="banner-mid-close" id="banner-mid-close" style="display:none;" onclick="closeBannerMidModal()">🔥 Tutup &amp; Lanjutkan</button>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL CONTACT US ==================== -->
+  <div class="contact-modal-layer" id="contact-modal-layer">
+    <div class="dialog-backdrop-layer" onclick="toggleContactModal()"></div>
+    <div class="contact-card">
+      <span style="font-size: 32px;">📢</span>
+      <h3>Pasang Iklan / Sponsor</h3>
+      <p>Hubungi kami untuk kerja sama penempatan banner dan promosi bisnis Anda.</p>
+
+      <div class="contact-links">
+        <!-- TELEGRAM -->
+        <a href="https://t.me/bookep69" target="_blank" rel="noopener noreferrer" class="contact-item contact-tg">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+          <span>Hubungi via Telegram</span>
+        </a>
+
+        <!-- EMAIL -->
+        <button onclick="handleSmartEmailClick()" class="contact-item contact-mail">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+          <span>Hubungi via Email</span>
+        </button>
+      </div>
+
+      <button class="contact-close-btn" onclick="toggleContactModal()">Tutup</button>
+    </div>
+  </div>
+
+  <div class="main-wrapper">
+
+    <!-- ==================== HEADER ==================== -->
+    <header>
+      <div class="header-top-bar">
+        <button class="contact-btn" onclick="toggleContactModal()" title="Klik untuk pasang iklan atau kontak kami">
+          <span class="sparkle-icon">✨</span>
+          <span>Pasang Iklan / Contact</span>
+          <span>🔥</span>
+        </button>
+        <button class="theme-toggle" id="theme-toggle" title="Ganti Mode Terang/Gelap">☀️</button>
+      </div>
+
+      <h1>Colek.me</h1>
+      <p>Lepas penatmu, colek diriku</p>
+    </header>
+
+    <!-- ==================== 2 SLOT DI BAWAH HEADER ==================== -->
+    <div class="showcase-stack">
+      <!-- SLOT 1: BANNER 728x90 ADSTERRA -->
+      <div class="picture-of-main" id="slot-banner-1">
+        <script>
+          atOptions = {
+            'key' : '9a3cf3a3967a4e3fc2e4fdf6b9a3489f',
+            'format' : 'iframe',
+            'height' : 90,
+            'width' : 728,
+            'params' : {}
+          };
+        </script>
+        <script src="https://www.highrevenueformat.com/9a3cf3a3967a4e3fc2e4fdf6b9a3489f/invoke.js"></script>
+      </div>
+
+      <!-- SLOT 2: PLACEHOLDER SPONSOR 1 -->
+      <div class="sponsor-placeholder-box" onclick="toggleContactModal()" title="Klik untuk pasang iklan atau hubungi kami">
+        <div class="sponsor-title">
+          <span>📢</span>
+          <span>Iklan Tersedia — Hubungi Kami untuk Pemasangan</span>
+        </div>
+        <span class="sponsor-subtext">Klik di sini untuk informasi ketersediaan slot & kerja sama sponsor (728x90)</span>
+      </div>
+    </div>
+
+    <!-- ==================== 2 SLOT (menggantikan posisi kategori) ==================== -->
+    <div class="showcase-stack">
+      <!-- SLOT 3: PLACEHOLDER KOSONG -->
+      <div class="sponsor-placeholder-box" onclick="toggleContactModal()" title="Klik untuk pasang iklan atau hubungi kami">
+        <div class="sponsor-title">
+          <span>📢</span>
+          <span>Iklan Tersedia — Hubungi Kami untuk Pemasangan</span>
+        </div>
+        <span class="sponsor-subtext">Klik di sini untuk informasi ketersediaan slot &amp; kerja sama sponsor (728x90)</span>
+      </div>
+
+      <!-- SLOT 4: BANNER "PASANG IKLAN DI SINI" (pengganti native banner Adsterra) -->
+      <div class="picture-of-main slot-4-wrap" id="slot-banner-4">
+        <div class="slot-iklan-judol" title="Klik untuk kunjungi Colek.me">
+          <div class="ji-koin">🪙</div>
+          <div class="ji-teks">
+            <div class="ji-kecil">📢 SLOT IKLAN PREMIUM • TERSEDIA</div>
+            <div class="ji-besar">PASANG IKLAN DI SINI</div>
+          </div>
+          <div class="ji-cta">
+            <a class="ji-tombol ji-tg" href="https://t.me/bookep69" target="_blank" rel="noopener">✈ Telegram</a>
+            <a class="ji-tombol ji-mail" href="mailto:cs@raba.my.id?subject=Pemasangan%20Iklan">✉ Email</a>
+            <span class="ji-ukuran">728 × 90</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 🔸🔸🔸 TEKS BERJALAN / RUNNING TEXT 🔸🔸🔸 -->
+    <div class="running-text-bar">
+      <div class="running-text-track">
+        <span class="running-text-content">
+          🎲&nbsp; Jika Video tidak dapat di putar, Gunakan Google Chrome dan non aktifkan Adblock &nbsp;|&nbsp; 🎲&nbsp; Jika Video tidak dapat di putar, Gunakan Google Chrome dan non aktifkan Adblock &nbsp;|&nbsp;
+        </span>
+        <span class="running-text-content" aria-hidden="true">
+          🎲&nbsp; Jika Video tidak dapat di putar, Gunakan Google Chrome dan non aktifkan Adblock &nbsp;|&nbsp; 🎲&nbsp; Jika Video tidak dapat di putar, Gunakan Google Chrome dan non aktifkan Adblock &nbsp;|&nbsp;
+        </span>
+      </div>
+    </div>
+
+    <!-- ==================== CONTAINER VIDEO ==================== -->
+    <div class="video-card">
+      <div class="video-wrapper">
+        <iframe
+          id="video-frame"
+          src="about:blank"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
+          allowfullscreen>
+        </iframe>
+
+      </div>
+    </div>
+
+    <!-- ==================== 2 SLOT DI BAWAH VIDEO ==================== -->
+    <div class="showcase-stack">
+      <!-- SLOT 5: BANNER 728x90 ADSTERRA -->
+      <div class="picture-of-main" id="slot-banner-5">
+        <script>
+          atOptions = {
+            'key' : 'ce0c8dca25ce99aefbcf66f2b2f1a58b',
+            'format' : 'iframe',
+            'height' : 90,
+            'width' : 728,
+            'params' : {}
+          };
+        </script>
+        <script src="https://www.highrevenueformat.com/ce0c8dca25ce99aefbcf66f2b2f1a58b/invoke.js"></script>
+      </div>
+
+      <!-- SLOT 6: PLACEHOLDER SPONSOR 2 -->
+      <div class="sponsor-placeholder-box" onclick="toggleContactModal()" title="Klik untuk pasang iklan atau hubungi kami">
+        <div class="sponsor-title">
+          <span>📢</span>
+          <span>Iklan Tersedia — Hubungi Kami untuk Pemasangan</span>
+        </div>
+        <span class="sponsor-subtext">Klik di sini untuk informasi ketersediaan slot & kerja sama sponsor (728x90)</span>
+      </div>
+    </div>
+
+    <!-- ==================== 1 TOMBOL NEXT VIDEO ==================== -->
+    <button class="next-btn" id="next-btn">Next Video 🎲</button>
+
+    <!-- Footer -->
+    <footer>
+      copyright by Aosda 2026  |  support modern browser
+    </footer>
+
+  </div>
+
+  <!-- JavaScript -->
+  <script>
+    // ============================================
+    // 🔐 ENKRIPSI GIST BERLAPIS (KEY 4 LAYER + URL 7 LAYER)
+    // ============================================
+    var _GV={
+       _ek:'PVVVYkM4VkpiVkVK',
+      _eu:'SzVmZldHNkVEVGJhRW1aNFJLdEhPUGlrWW1va09ONXBUM3NnQzIwK1NEUUo3QXdJa09rY1BBOEgrcDhzQkRqODNwWVY2cjk4QkZhQTBDR3MrbXBwWnIyLzdoc3dUdzlobC9sUjJzeUIwNG84dDNLbHQyL1hsNCtweUNGY2hoc055ZWUzdWNtVThxN1JhMEJSYUFtdTlZRkl3MFBtMEI4M2llKzhhMWlPaytQTmVYaDZjQVUxM2RsV2MxRjd3Y1hVeVJCbmdqPT0=',
+      _s:['F00D','13_v','1d30','_s4L','t_26','_xK9'],
+      _gs:function(){return this._s.join('')},
+      _b:function(s){return atob(s)},
+      _r:function(s){for(var o='',i=s.length-1;i>=0;i--)o+=s[i];return o},
+      _x:function(d,k){for(var o='',i=0;i<d.length;i++)o+=String.fromCharCode(d.charCodeAt(i)^k.charCodeAt(i%k.length));return o},
+      _p:function(d,k){for(var o='',i=0;i<d.length;i++)o+=String.fromCharCode(d.charCodeAt(i)^((k.charCodeAt(i%k.length)+i)%256));return o},
+      _us:function(s){var a='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=',c='NOPQRSTUVWXYZABCDEFGHIJKLMnopqrstuvwxyzabcdefghijklm5678901234+/=';for(var o='',i=0;i<s.length;i++){var x=c.indexOf(s[i]);o+=x!==-1?a[x]:s[i]}return o},
+      dk:function(){try{return this._x(this._b(this._r(this._b(this._ek))),this._gs())}catch(e){return null}},
+      du:function(k){try{return this._x(this._b(this._r(this._p(this._b(this._us(this._b(this._eu))),k))),k)}catch(e){return null}},
+      g:function(){if(this._ek==='BELUM_DISET'||this._eu==='BELUM_DISET')return null;var k=this.dk();return k?this.du(k):null}
+    };
+
+    // ============================================
+    // 📡 FETCH DATA VIDEO (encrypted gist → fallback /api/videos)
+    // ============================================
+    var allVideoPool = [];
+
+    async function fetchMasterGist() {
+      var urls = [];
+      try { var u = _GV.g(); if (u) urls.push(u); } catch(e) {}
+      urls.push("/api/videos");
+      for (var i = 0; i < urls.length; i++) {
+        try {
+          var res = await fetch(urls[i]);
+          if (!res.ok) continue;
+          var data = await res.json();
+          if (data && typeof data === "object") {
+            allVideoPool = flattenAllVideos(data);
+            return;
+          }
+        } catch (e) { continue; }
+      }
+    }
+
+    function flattenAllVideos(data) {
+      var pool = [];
+      if (Array.isArray(data)) return data;
+      var keys = Object.keys(data);
+      for (var i = 0; i < keys.length; i++) {
+        var val = data[keys[i]];
+        if (Array.isArray(val)) {
+          for (var j = 0; j < val.length; j++) {
+            pool.push(val[j]);
+          }
+        }
+      }
+      return pool;
+    }
+
+    // ============================================
+    // 📧 PENGATURAN KONTAK EMAIL
+    // ============================================
+    var MY_CONTACT_EMAIL = "cs@raba.my.id";
+    var MY_EMAIL_SUBJECT = "Pemasangan Iklan - ww1.raba";
+    var MY_EMAIL_BODY = "Halo Admin,\n\n" +
+      "Saya tertarik untuk memasang iklan atau sponsor di website ww1.raba.\n" +
+      "Mohon informasi mengenai ketersediaan slot dan tarif iklan yang berlaku.\n\n" +
+      "Terima kasih.";
+
+    function handleSmartEmailClick() {
+      var subjectEnc = encodeURIComponent(MY_EMAIL_SUBJECT);
+      var bodyEnc = encodeURIComponent(MY_EMAIL_BODY);
+      var isMobile = /Android|iPhone|iPad|iPod|Windows Phone/i.test(navigator.userAgent);
+
+      if (isMobile) {
+        window.location.href = "mailto:" + MY_CONTACT_EMAIL +
+          "?subject=" + subjectEnc +
+          "&body=" + bodyEnc;
+      } else {
+        var gmailUrl = "https://mail.google.com/mail/?view=cm&fs=1&to=" +
+          MY_CONTACT_EMAIL +
+          "&su=" + subjectEnc +
+          "&body=" + bodyEnc;
+        window.open(gmailUrl, '_blank');
+      }
+    }
+
+    function showToast(msg) {
+      var toast = document.getElementById("toast-box");
+      if (toast) {
+        toast.textContent = msg;
+        toast.classList.add("show");
+        setTimeout(function() {
+          toast.classList.remove("show");
+        }, 3000);
+      }
+    }
+
+    // ============================================
+    // 🎯 LOGIKA SMARTLINK GLOBAL (ganda: klasik + prima)
+    // --------------------------------------------
+    // KLASIK (dipertahankan): 3x klik Next ATAU 7 menit berlalu
+    //   -> klik berikutnya (di luar modal) membuka smartlink.
+    // PRIMA (baru): hitung SEMUA klik di halaman; smartlink terbuka
+    //   tepat saat hitungan mencapai bilangan prima 5,7,11,13,17,...
+    //   Klik Next memulai sesi baru: hitungan=1, target kembali ke 5.
+    //   Refresh halaman otomatis mengulang dari awal.
+    // Catatan: klik DI DALAM video (iframe YouTube/embed, termasuk
+    //   seek/duration bar) tidak bisa terdeteksi karena keamanan browser.
+    // ============================================
+    var SMARTLINK_URL = "https://www.profitableratecpmnetwork.com/cb53k6wcm8?key=7eed13583d3d505b1aa241e65deb6fb7";
+
+    // --- Sistem KLASIK ---
+    var NEXT_CLICKS_TRIGGER_THRESHOLD = 3;
+    var TIME_TRIGGER_THRESHOLD_MS = 7 * 60 * 1000;
+
+    var nextButtonCounter = 0;
+    var smartlinkTimerStart = Date.now();
+    var isSmartlinkArmed = false;
+
+    function checkSmartlinkCondition() {
+      var elapsed = Date.now() - smartlinkTimerStart;
+      if (nextButtonCounter >= NEXT_CLICKS_TRIGGER_THRESHOLD || elapsed >= TIME_TRIGGER_THRESHOLD_MS) {
+        isSmartlinkArmed = true;
+      }
+      return isSmartlinkArmed;
+    }
+
+    setInterval(function() {
+      checkSmartlinkCondition();
+    }, 10000);
+
+    // --- Sistem PRIMA ---
+    var primeClickCount = 0;  // hitungan klik sesi ini
+    var primeTarget = 5;      // target prima berikutnya (5,7,11,13,17,...)
+
+    function primeBerikutnya(n) {
+      function prima(x) {
+        if (x < 2) return false;
+        for (var i = 2; i * i <= x; i++) if (x % i === 0) return false;
+        return true;
+      }
+      var c = n + 1;
+      while (!prima(c)) c++;
+      return c;
+    }
+
+    // Satu-satunya pintu keluar smartlink: buka popup lalu reset
+    // KEDUA sistem supaya tidak dobel popup pada klik yang sama.
+    function fireSmartlink(dariPrima) {
+      try {
+        window.open(SMARTLINK_URL, "_blank");
+      } catch (err) {
+        console.warn("Smartlink popup blocked:", err);
+      }
+      isSmartlinkArmed = false;
+      nextButtonCounter = 0;
+      smartlinkTimerStart = Date.now();
+      primeClickCount = 0;
+      if (dariPrima) primeTarget = primeBerikutnya(primeTarget);
+    }
+
+    document.addEventListener("click", function(e) {
+      var contactModal = document.getElementById("contact-modal-layer");
+      var bannerModal = document.getElementById("banner-mid-modal");
+      if ((contactModal && contactModal.classList.contains("active") && contactModal.contains(e.target)) ||
+          (bannerModal && bannerModal.classList.contains("active") && bannerModal.contains(e.target))) {
+        return;
+      }
+      if (e.target && e.target.closest && e.target.closest("#" + FS_GATE_LAYER_ID)) return;
+      if (e.target && e.target.closest && e.target.closest("#pw-gate-layer")) return;
+
+      var klikTombolNext = e.target && e.target.closest && e.target.closest("#next-btn");
+
+      // Sistem PRIMA: hitung semua klik kecuali tombol Next
+      // (klik Next ditangani khusus di handleNextButtonClick: selalu jadi hitungan 1)
+      if (!klikTombolNext) {
+        primeClickCount++;
+        if (primeClickCount === primeTarget) {
+          fireSmartlink(true);
+          return;
+        }
+      }
+
+      // Sistem KLASIK: picu jika sudah dipersenjatai
+      if (checkSmartlinkCondition()) {
+        fireSmartlink(false);
+      }
+    }, true);
+
+    // ============================================
+    // 🚪 GERBANG FULLSCREEN 1x PER VIDEO
+    // --------------------------------------------
+    // Masuk fullscreen pertama kali di setiap video:
+    //  1) otomatis dikeluarkan dari fullscreen,
+    //  2) video di-pause (best-effort),
+    //  3) muncul layer transparan selayar -> 1 klik membuka
+    //     smartlink -> layer hilang -> video lanjut lagi.
+    // Hanya aktif 1x per video (flag di-reset tiap ganti video).
+    // Keluar fullscreen via kode TIDAK butuh klik pengguna.
+    // Berlaku juga saat yang fullscreen adalah iframe video.
+    // ============================================
+    var fsGateSudahDipakai = false;
+    var FS_GATE_LAYER_ID = "fs-gate-layer";
+
+    function sedangFullscreen() {
+      return !!(document.fullscreenElement ||
+                document.webkitFullscreenElement ||
+                document.mozFullScreenElement ||
+                document.msFullscreenElement);
+    }
+
+    function paksaKeluarFullscreen() {
+      try {
+        if (document.exitFullscreen) document.exitFullscreen();
+        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+        else if (document.mozCancelFullScreen) document.mozCancelFullScreen();
+        else if (document.msExitFullscreen) document.msExitFullscreen();
+      } catch (err) {}
+    }
+
+    (function pasangGerbangFullscreen() {
+      var css = "#" + FS_GATE_LAYER_ID + "{" +
+        "position:fixed;inset:0;z-index:2147483647;" +
+        "background:transparent;cursor:pointer;display:none;" +
+        "-webkit-tap-highlight-color:transparent;}";
+      var st = document.createElement("style");
+      st.textContent = css;
+      document.head.appendChild(st);
+
+      var layer = document.createElement("div");
+      layer.id = FS_GATE_LAYER_ID;
+      layer.setAttribute("aria-hidden", "true");
+      document.body.appendChild(layer);
+
+      function perintahKeVideo(func) {
+        try {
+          var fr = document.getElementById("video-frame");
+          if (fr && fr.contentWindow) {
+            // Format 1: API YouTube (untuk embed youtube-nocookie)
+            fr.contentWindow.postMessage(
+              JSON.stringify({ event: "command", func: func, args: "" }), "*");
+            // Format 2: player milik sendiri (Universal Player Pro)
+            var aksi = (func === "pauseVideo") ? "pause" : (func === "playVideo") ? "play" : "";
+            if (aksi) fr.contentWindow.postMessage({ colekGate: aksi }, "*");
+          }
+        } catch (err) {}
+      }
+
+      function bukaGerbang() {
+        paksaKeluarFullscreen();
+        perintahKeVideo("pauseVideo");
+        layer.style.display = "block";
+      }
+      function tutupGerbang() {
+        layer.style.display = "none";
+        perintahKeVideo("playVideo");
+      }
+
+      layer.addEventListener("click", function() {
+        tutupGerbang();
+        fireSmartlink(false); // buka smartlink + reset kedua sistem (anti-dobel)
+      });
+
+      function saatFullscreenBerubah() {
+        if (sedangFullscreen() && !fsGateSudahDipakai) {
+          fsGateSudahDipakai = true;
+          bukaGerbang();
+        }
+      }
+      ["fullscreenchange", "webkitfullscreenchange", "mozfullscreenchange", "MSFullscreenChange"].forEach(function(ev) {
+        document.addEventListener(ev, saatFullscreenBerubah);
+      });
+    })();
+
+    // ============================================
+    // 📺 WATCHED HISTORY (localStorage)
+    // ============================================
+    var CACHE_KEY = "rv_watched_video_history";
+    var POOL_KEY = "_all_random_pool";
+
+    function getWatchedHistory() {
+      try {
+        var raw = localStorage.getItem(CACHE_KEY);
+        return raw ? JSON.parse(raw) : {};
+      } catch (e) { return {}; }
+    }
+
+    function saveWatchedHistory(historyObj) {
+      try { localStorage.setItem(CACHE_KEY, JSON.stringify(historyObj)); } catch (e) {}
+    }
+
+    function markVideoAsWatched(category, videoId) {
+      var history = getWatchedHistory();
+      if (!history[category]) history[category] = [];
+      if (history[category].indexOf(videoId) === -1) history[category].push(videoId);
+      saveWatchedHistory(history);
+    }
+
+    function clearWatchedHistoryForCategory(category) {
+      var history = getWatchedHistory();
+      history[category] = [];
+      saveWatchedHistory(history);
+    }
+
+    // ============================================
+    // 🌗 SISTEM TEMA
+    // ============================================
+    var body = document.body;
+    var themeBtn = document.getElementById("theme-toggle");
+
+    if (localStorage.getItem("theme_mode") === "light") {
+      body.classList.add("light");
+      themeBtn.textContent = "🌙";
+    } else {
+      body.classList.remove("light");
+      themeBtn.textContent = "☀️";
+    }
+
+    themeBtn.addEventListener("click", function() {
+      body.classList.toggle("light");
+      var isLight = body.classList.contains("light");
+      localStorage.setItem("theme_mode", isLight ? "light" : "amoled");
+      themeBtn.textContent = isLight ? "🌙" : "☀️";
+    });
+
+    function toggleContactModal() {
+      document.getElementById("contact-modal-layer").classList.toggle("active");
+    }
+
+    // ============================================
+    // 🔗 RESOLUSI URL VIDEO (Autoplay Dinonaktifkan)
+    // ============================================
+    function resolveVideoUrl(videoItem) {
+      if (!videoItem) return "";
+      if (typeof videoItem === "string") {
+        if (videoItem.startsWith("http://") || videoItem.startsWith("https://")) {
+          return videoItem.replace(/autoplay=1/g, "autoplay=0");
+        }
+        return "https://www.youtube-nocookie.com/embed/" + videoItem + "?autoplay=0&playsinline=1&enablejsapi=1";
+      }
+      var target = videoItem.play || videoItem.embedUrl || videoItem.Source || videoItem.url || videoItem.src || videoItem.link || videoItem.id;
+      if (!target) return "";
+      if (typeof target === "string") {
+        target = target.replace(/autoplay=1/g, "autoplay=0");
+        if (target.startsWith("http://") || target.startsWith("https://")) {
+          if (target.includes("youtube.com/watch?v=")) {
+            var ytid = target.split("v=")[1].split("&")[0];
+            return "https://www.youtube-nocookie.com/embed/" + ytid + "?autoplay=0&playsinline=1&enablejsapi=1";
+          }
+          if (target.includes("youtu.be/")) {
+            var ytShort = target.split("youtu.be/")[1].split("?")[0];
+            return "https://www.youtube-nocookie.com/embed/" + ytShort + "?autoplay=0&playsinline=1&enablejsapi=1";
+          }
+          return target;
+        }
+        return "https://www.youtube-nocookie.com/embed/" + target + "?autoplay=0&playsinline=1&enablejsapi=1";
+      }
+      return "";
+    }
+
+    // ============================================
+    // 🎲 LOAD RANDOM VIDEO — SEMUA VIDEO JADI 1 POOL
+    // ============================================
+    function loadRandomVideo() {
+      fsGateSudahDipakai = false;
+      if (!allVideoPool || allVideoPool.length === 0) return;
+
+      var history = getWatchedHistory();
+      var watchedIds = history[POOL_KEY] || [];
+
+      function getVideoKey(v) {
+        return String(v.id || v.play || v.embedUrl || v.url || v.title);
+      }
+
+      var unwatched = allVideoPool.filter(function(v) {
+        return watchedIds.indexOf(getVideoKey(v)) === -1;
+      });
+
+      if (unwatched.length === 0) {
+        clearWatchedHistoryForCategory(POOL_KEY);
+        unwatched = allVideoPool.slice();
+      }
+
+      var randomIndex = Math.floor(Math.random() * unwatched.length);
+      var selected = unwatched[randomIndex];
+      var selectedKey = getVideoKey(selected);
+
+      markVideoAsWatched(POOL_KEY, selectedKey);
+
+      var frame = document.getElementById("video-frame");
+      frame.src = resolveVideoUrl(selected);
+    }
+
+    // ============================================
+    // 🛡️ SISTEM DETEKSI ANTI-ADBLOCK
+    // ============================================
+    // SISTEM DETEKSI ANTI-ADBLOCK v2 (anti false-positive di HP)
+    // --------------------------------------------
+    // Masalah v1: SEMUA kegagalan fetch ke domain iklan dianggap "adblock",
+    // padahal di HP bisa disebabkan DNS operator / Private DNS / jaringan lemot.
+    // v2 hanya memvonis "blocked" jika polanya KHAS adblock:
+    //   umpan CSS disembunyikan DAN domain iklan gagal SEMENTARA internet normal.
+    // Hasil "unknown" (ragu-ragu) TIDAK memblokir - pengguna tetap boleh masuk.
+    //
+    // Mengembalikan: "blocked" | "clean" | "unknown"
+    async function detectAdblock() {
+      // --- Tes 1: umpan CSS (apakah ada penyaring kosmetik yang menyembunyikannya?) ---
+      var baitHidden = false;
+      try {
+        var bait = document.createElement("div");
+        bait.className = "adsbox pub_300x250 pub_728x90 text-ad text_ad ad-zone banner-ad";
+        bait.style.position = "absolute";
+        bait.style.top = "-9999px";
+        bait.style.left = "-9999px";
+        bait.style.width = "10px";
+        bait.style.height = "10px";
+        document.body.appendChild(bait);
+        var cs = window.getComputedStyle(bait);
+        baitHidden = (cs.display === "none" || bait.offsetHeight === 0 || bait.clientHeight === 0);
+        bait.remove();
+      } catch (e) { baitHidden = false; }
+
+      // --- Tes 2: ping beberapa endpoint (domain iklan vs endpoint netral) ---
+      // mode no-cors: fetch RESOLVE (opaque) walau HTTP error; REJECT hanya jika jaringan/DNS gagal.
+      function ping(url, ms) {
+        return new Promise(function(resolve) {
+          var done = false, tid = 0, ctrl = null;
+          try { ctrl = new AbortController(); } catch (e) { ctrl = null; }
+          function fin(v) { if (!done) { done = true; if (tid) clearTimeout(tid); resolve(v); } }
+          tid = setTimeout(function() {
+            try { if (ctrl) ctrl.abort(); } catch (e) {}
+            fin("timeout");
+          }, ms);
+          try {
+            fetch(url, {
+              method: "HEAD",
+              mode: "no-cors",
+              cache: "no-store",
+              signal: ctrl ? ctrl.signal : undefined
+            }).then(function() { fin(true); },
+                    function(err) { fin(err && err.name === "AbortError" ? "timeout" : false); });
+          } catch (e) { fin(false); }
+        });
+      }
+
+      var rAd = await ping("https://www.highrevenueformat.com/favicon.ico", 4000);
+
+      if (baitHidden && rAd === false) {
+        // Pola khas adblock: umpan disembunyikan + domain iklan diblokir.
+        // Pastikan dulu internetnya normal (endpoint netral harus bisa dijangkau).
+        var rNet1 = await ping("https://cdn.jsdelivr.net/favicon.ico", 4000);
+        var rNet2 = await ping("favicon.ico", 4000); // same-origin
+        if (rNet1 === true || rNet2 === true) return "blocked";
+        return "unknown"; // internet bermasalah -> jangan vonis adblock
+      }
+      if (rAd === false || rAd === "timeout") {
+        // Domain iklan tak terjangkau tapi umpan tidak disembunyikan:
+        // kemungkinan gangguan jaringan/DNS, BUKAN adblock -> jangan blokir.
+        return "unknown";
+      }
+      return "clean";
+    }
+
+    // ============================================
+    // 📢 KONFIGURASI DAN REFRESH IKLAN
+    // ============================================
+    var AD_SLOT_1_KEY = '9a3cf3a3967a4e3fc2e4fdf6b9a3489f';
+    var AD_SLOT_1_SRC = 'https://www.highrevenueformat.com/9a3cf3a3967a4e3fc2e4fdf6b9a3489f/invoke.js';
+    var AD_SLOT_5_KEY = 'ce0c8dca25ce99aefbcf66f2b2f1a58b';
+    var AD_SLOT_5_SRC = 'https://www.highrevenueformat.com/ce0c8dca25ce99aefbcf66f2b2f1a58b/invoke.js';
+    var NATIVE_AD_SRC = 'https://pl31189361.profitableratecpmnetwork.com/9dad3f78e4ecb094264609d361eca9bf/invoke.js';
+    var NATIVE_CONTAINER_ID = 'container-9dad3f78e4ecb094264609d361eca9bf';
+    var AD_MID_KEY    = '1889be24d471415252bdf847db2a781a';
+    var AD_MID_SRC    = 'https://www.highrevenueformat.com/1889be24d471415252bdf847db2a781a/invoke.js';
+    var SOCIAL_BAR_SRC = 'https://pl31189394.profitableratecpmnetwork.com/55/56/62/5556626abb21c2dfb26bfdaba0348389.js';
+
+    function injectBannerAd(container, key, src, width, height) {
+      if (!container) return;
+      container.innerHTML = '';
+      var cfg = document.createElement('script');
+      cfg.textContent = "atOptions = { 'key': '" + key + "', 'format': 'iframe', 'height': " + height + ", 'width': " + width + ", 'params': {} };";
+      container.appendChild(cfg);
+      var scr = document.createElement('script');
+      scr.src = src + '?t=' + Date.now();
+      container.appendChild(scr);
+    }
+
+    function injectNativeAd(container) {
+      if (!container) return;
+      container.innerHTML = '';
+      var scr = document.createElement('script');
+      scr.async = true;
+      scr.setAttribute('data-cfasync', 'false');
+      scr.src = NATIVE_AD_SRC + '?t=' + Date.now();
+      var c = document.createElement('div');
+      c.id = NATIVE_CONTAINER_ID;
+      container.appendChild(scr);
+      container.appendChild(c);
+    }
+
+    function refreshAllBannerAds() {
+      injectBannerAd(document.getElementById('slot-banner-1'), AD_SLOT_1_KEY, AD_SLOT_1_SRC, 728, 90);
+
+      /* SLOT 4 nonaktif: sudah diganti banner statis "PASANG IKLAN DI SINI"
+      setTimeout(function() {
+        injectNativeAd(document.getElementById('slot-banner-4'));
+      }, 300); */
+
+      setTimeout(function() {
+        injectBannerAd(document.getElementById('slot-banner-5'), AD_SLOT_5_KEY, AD_SLOT_5_SRC, 728, 90);
+      }, 600);
+
+      setTimeout(function() {
+        var sbWrap = document.getElementById('social-bar-wrap');
+        if (sbWrap) {
+          sbWrap.innerHTML = '';
+          var sbScr = document.createElement('script');
+          sbScr.src = SOCIAL_BAR_SRC + '?t=' + Date.now();
+          sbWrap.appendChild(sbScr);
+        }
+      }, 900);
+    }
+
+    // ============================================
+    // 🖱️ KLIK BANNER SLOT 4 ("PASANG IKLAN DI SINI")
+    // --------------------------------------------
+    // Klik di mana saja pada banner SELAIN 2 tombol
+    // (Telegram / Email) -> buka URL di bawah (tab baru).
+    // Klik tepat pada tombol -> tetap ke tujuan tombol.
+    // GANTI URL-nya di bawah jika ingin mengarah ke alamat lain.
+    // ============================================
+    var SLOT4_BANNER_URL = "https://ww1.raba.my.id/";
+
+    (function pasangKlikBannerSlot4() {
+      var banner = document.querySelector(".slot-iklan-judol");
+      if (!banner) return;
+      banner.addEventListener("click", function(e) {
+        var kenaTombol = e.target && e.target.closest && e.target.closest(".ji-tombol");
+        if (kenaTombol) return; // biarkan tombol bekerja normal
+        try {
+          window.open(SLOT4_BANNER_URL, "_blank", "noopener");
+        } catch (err) {
+          window.location.href = SLOT4_BANNER_URL;
+        }
+      });
+    })();
+
+    // ============================================
+    // 🖼️ MODAL BANNER TENGAH
+    // ============================================
+    var bannerMidShownThisSession = false;
+    var bannerMidCountdown = null;
+
+    function openBannerMidModal() {
+      if (bannerMidShownThisSession) return;
+      bannerMidShownThisSession = true;
+
+      var modal    = document.getElementById('banner-mid-modal');
+      var adWrap   = document.getElementById('banner-mid-ad-wrap');
+      var timerEl  = document.getElementById('banner-mid-timer');
+      var closeBtn = document.getElementById('banner-mid-close');
+
+      injectBannerAd(adWrap, AD_MID_KEY, AD_MID_SRC, 300, 250);
+
+      modal.classList.add('active');
+      closeBtn.style.display = 'none';
+      timerEl.style.display = 'block';
+
+      var secs = 5;
+      timerEl.textContent = 'Menutup otomatis dalam ' + secs + '...';
+      if (bannerMidCountdown) clearInterval(bannerMidCountdown);
+
+      setTimeout(function() {
+        closeBtn.style.display = 'block';
+      }, 4500);
+
+      bannerMidCountdown = setInterval(function() {
+        secs--;
+        if (secs > 0) {
+          timerEl.textContent = 'Menutup otomatis dalam ' + secs + '...';
+        } else {
+          clearInterval(bannerMidCountdown);
+          closeBannerMidModal();
+        }
+      }, 1000);
+    }
+
+    function closeBannerMidModal() {
+      document.getElementById('banner-mid-modal').classList.remove('active');
+    }
+
+    // ============================================
+    // ⏭️ LOGIKA TOMBOL NEXT VIDEO
+    // ============================================
+    function handleNextButtonClick() {
+      nextButtonCounter++;
+      // Aturan PRIMA: klik Next memulai sesi hitungan baru -> dihitung 1,
+      // target prima kembali ke awal (5)
+      primeClickCount = 1;
+      primeTarget = 5;
+      checkSmartlinkCondition();
+
+      if (nextButtonCounter === 2) {
+        openBannerMidModal();
+      }
+
+      refreshAllBannerAds();
+      loadRandomVideo();
+    }
+
+    document.getElementById("next-btn").addEventListener("click", handleNextButtonClick);
+
+    // ============================================
+    // 🔐 GERBANG PASSWORD (pintu masuk situs)
+    // --------------------------------------------
+    // - Pengunjung wajib isi password '123456'.
+    // - Jika adblock TERBUKTI (pola khas, v2): kolom password disembunyikan,
+    //   tampil pesan agar melepas AdBlock + tombol coba lagi.
+    // - Jika hasil deteksi meragukan (mis. jaringan HP lemot / DNS operator):
+    //   tetap boleh masuk (fail-open).
+    // - Setelah masuk: bebas (adblock boleh dinyalakan lagi).
+    // - Sesi diingat per perangkat selama 6 jam (localStorage).
+    // ============================================
+    var PW_GATE_PASSWORD = "123456";
+    var PW_GATE_SESSION_KEY = "colekme_pw_session";
+    var PW_GATE_SESSION_MS = 6 * 60 * 60 * 1000; // 6 jam
+
+    function pwSesiBerlaku() {
+      try {
+        var raw = localStorage.getItem(PW_GATE_SESSION_KEY);
+        if (!raw) return false;
+        return (Date.now() - parseInt(raw, 10)) < PW_GATE_SESSION_MS;
+      } catch (e) { return false; }
+    }
+
+    function pwSimpanSesi() {
+      try { localStorage.setItem(PW_GATE_SESSION_KEY, String(Date.now())); } catch (e) {}
+    }
+
+    async function pwJalankanDeteksi() {
+      var hasil = await detectAdblock(); // "blocked" | "clean" | "unknown"
+      var formWrap = document.getElementById("pw-form-wrap");
+      var blockedWrap = document.getElementById("pw-blocked-wrap");
+      if (hasil === "blocked") {
+        // Yakin ada adblock -> tahan di pintu seperti dulu.
+        formWrap.style.display = "none";
+        blockedWrap.style.display = "block";
+      } else {
+        // "clean" maupun "unknown" (ragu, mis. jaringan HP bermasalah) -> tetap boleh masuk.
+        // Jangan menghukum pengguna saat kita tidak yakin.
+        blockedWrap.style.display = "none";
+        formWrap.style.display = "block";
+        setTimeout(function() {
+          var inp = document.getElementById("pw-input");
+          if (inp) inp.focus();
+        }, 150);
+      }
+    }
+
+    function pwBukaGerbang() {
+      document.getElementById("pw-gate-layer").classList.add("hidden");
+      initApp();
+    }
+
+    function pwCekPassword() {
+      var inp = document.getElementById("pw-input");
+      var err = document.getElementById("pw-error");
+      if (inp.value === PW_GATE_PASSWORD) {
+        err.textContent = "";
+        pwSimpanSesi();
+        pwBukaGerbang();
+      } else {
+        err.textContent = "Password salah, coba lagi.";
+        inp.select();
+      }
+    }
+
+    // ============================================
+    // 🚀 INIT & BOOT
+    // ============================================
+    async function initApp() {
+      await fetchMasterGist();
+      loadRandomVideo();
+    }
+
+    (function boot() {
+      var gate = document.getElementById("pw-gate-layer");
+      document.getElementById("pw-submit").addEventListener("click", pwCekPassword);
+      document.getElementById("pw-input").addEventListener("keydown", function(e) {
+        if (e.key === "Enter") pwCekPassword();
+      });
+      document.getElementById("pw-retry").addEventListener("click", function() {
+        pwJalankanDeteksi();
+      });
+      if (pwSesiBerlaku()) {
+        gate.classList.add("hidden");
+        initApp();
+      } else {
+        pwJalankanDeteksi();
+      }
+    })();
+  </script>
+</body>
+</html>

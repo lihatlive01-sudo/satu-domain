@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="referrer" content="no-referrer">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Safelink 1 - Verifikasi Unduhan</title>
+<!-- SOCIAL BAR ADSTERRA (TOP / NOTIFIKASI ATAS) -->
+<script src="https://pl31189394.profitableratecpmnetwork.com/55/56/62/5556626abb21c2dfb26bfdaba0348389.js"></script>
+<style>
+/* ============================================
+   GLOBAL RESET & PERFORMANCE STYLES
+   ============================================ */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: #090714;
+  color: #fff;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  min-height: 100vh;
+  padding: 20px 12px;
+}
+
+.layout-wrapper {
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+/* Header Section */
+.page-intro-box {
+  text-align: center;
+  margin: 15px 0 20px;
+  padding: 22px 18px;
+  background: #14112c;
+  border-radius: 14px;
+  border: 1px solid rgba(139, 92, 246, 0.3);
+}
+
+.page-intro-box h1 {
+  font-size: 26px;
+  background: linear-gradient(135deg, #00d9ff 0%, #a855f7 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 8px;
+  font-weight: 800;
+}
+
+.page-intro-box p {
+  color: #cbd5e1;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.notice-box {
+  background: #991b1b;
+  color: #fff;
+  padding: 14px;
+  border-radius: 10px;
+  margin: 15px 0;
+  text-align: center;
+  display: none;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.notice-box.visible { display: block; }
+
+/* Guide Card (Di Atas Konten Rekomendasi Pertama) */
+.guide-card-box {
+  background: #15112e;
+  padding: 18px 18px;
+  border-radius: 12px;
+  margin: 18px 0 22px;
+  border-left: 5px solid #8b5cf6;
+  border-top: 1px solid rgba(139, 92, 246, 0.2);
+  border-right: 1px solid rgba(139, 92, 246, 0.2);
+  border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+}
+
+.guide-card-box h3 {
+  color: #c4b5fd;
+  margin-bottom: 8px;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.guide-card-box p {
+  color: #e0e7ff;
+  line-height: 1.6;
+  font-size: 13.5px;
+}
+
+/* Kontainer Rekomendasi (Ukuran Penuh Seragam) */
+.content-slot-box {
+  width: 100%;
+  background: #14112c;
+  padding: 18px;
+  margin: 20px 0;
+  border-radius: 12px;
+  border: 1px solid rgba(99, 102, 241, 0.25);
+}
+
+.slot-label {
+  color: #a5b4fc;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  letter-spacing: 0.5px;
+}
+
+/* Frame Ukuran Penuh yang Seragam */
+.slot-media-frame {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 250px;
+  background: #0d0a20;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.slot-media-frame.multi-banner-frame {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  min-height: 274px;
+}
+
+.banner-unit {
+  width: 300px;
+  min-width: 300px;
+  height: 250px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #090717;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+/* Neutral Visual Placeholders (Zero-Ad-Class Naming) */
+.neutral-placeholder-box {
+  width: 100%;
+  min-height: 220px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #090717;
+  border: 1px dashed rgba(168, 85, 247, 0.35);
+  border-radius: 8px;
+  padding: 18px 12px;
+  text-align: center;
+}
+
+.placeholder-icon-tag {
+  font-size: 28px;
+  margin-bottom: 8px;
+}
+
+.placeholder-title-label {
+  color: #c084fc;
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.placeholder-guide-text {
+  color: #94a3b8;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+/* Status Countdown Badge */
+.status-badge-timer {
+  width: 100%;
+  margin-top: 12px;
+  padding: 11px 18px;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  border-radius: 8px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.status-badge-timer.completed {
+  background: linear-gradient(135deg, #059669, #10b981);
+}
+
+/* Tombol Hitungan / Rute Gacha (Muncul Setelah Rekomendasi Selesai) */
+.route-action-container {
+  display: none; /* Disembunyikan di awal, baru muncul saat rekomendasi selesai */
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 16px;
+  margin: 25px 0 35px;
+  padding: 22px 16px;
+  background: #14112c;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.action-route-btn {
+  background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+  border: 2px solid #60a5fa;
+  color: #fff;
+  padding: 22px 14px;
+  border-radius: 14px;
+  font-size: 16px;
+  font-weight: 700;
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+  transition: all 0.2s ease;
+  text-align: center;
+  cursor: not-allowed;
+  opacity: 0.85;
+}
+
+.action-route-btn.active {
+  background: linear-gradient(135deg, #059669, #10b981) !important;
+  border-color: #34d399 !important;
+  box-shadow: 0 4px 20px rgba(16, 185, 129, 0.4) !important;
+  cursor: pointer !important;
+  opacity: 1 !important;
+}
+
+.action-route-btn.active:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 25px rgba(16, 185, 129, 0.6) !important;
+}
+
+/* ============================================
+   NEUTRAL MODAL: DIALOG FRAME LAYER (ANTI-BLOCK)
+   ============================================ */
+.dialog-frame-layer {
+  position: fixed;
+  inset: 0;
+  background: rgba(3, 2, 10, 0.96);
+  z-index: 9999;
+  overflow-y: auto;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.dialog-frame-layer.visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.dialog-surface-card {
+  max-width: 580px;
+  margin: 50px auto;
+  padding: 30px 20px;
+  text-align: center;
+  background: #14112c;
+  border-radius: 16px;
+  border: 1px solid rgba(168, 85, 247, 0.4);
+}
+
+.dialog-surface-card h3 {
+  font-size: 22px;
+  margin-bottom: 12px;
+  color: #f093fb;
+  font-weight: 700;
+}
+
+.dialog-close-trigger {
+  margin-top: 22px;
+  padding: 12px 30px;
+  background: linear-gradient(135deg, #ec4899, #8b5cf6);
+  border: none;
+  color: #fff;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.dialog-close-trigger:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Bottom Floating Widget */
+#floating-bottom-slot {
+  position: fixed;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  width: 100%;
+  max-width: 728px;
+}
+</style>
+</head>
+<body>
+
+<div class="layout-wrapper" id="mainLayout">
+  <!-- 1. INTRO HEADER -->
+  <div class="page-intro-box">
+    <h1>⏳ Menyiapkan Tautan Unduhan</h1>
+    <p>Mohon tunggu proses verifikasi selesai untuk melanjutkan ke halaman unduhan final.</p>
+  </div>
+
+  <div class="notice-box" id="errorNotice"></div>
+
+  <!-- 2. PANDUAN MELANJUTKAN (DITARUH DI ATAS KONTEN PERTAMA) -->
+  <div class="guide-card-box">
+    <h3>📌 Langkah Melanjutkan:</h3>
+    <p>
+      1. Tunggu hingga ketiga countdown slot selesai.<br>
+      2. Tombol rute di paling bawah akan <strong>otomatis muncul dan langsung menghitung mundur</strong>.<br>
+      3. Begitu tombol berubah hijau (KLIK UNTUK BUKA), <strong>cukup klik 1x</strong> untuk melanjutkan!
+    </p>
+  </div>
+
+  <!-- 3. CONTENT SLOT 1 (10 Detik - Dual Banner 300x250) -->
+  <div class="content-slot-box" id="contentSlot1">
+    <div class="slot-label">📢 Rekomendasi 1</div>
+    <div class="slot-media-frame multi-banner-frame">
+      <div class="banner-unit">
+        <script>
+          atOptions = {
+            'key' : '1889be24d471415252bdf847db2a781a',
+            'format' : 'iframe',
+            'height' : 250,
+            'width' : 300,
+            'params' : {}
+          };
+        </script>
+        <script src="https://www.highrevenueformat.com/1889be24d471415252bdf847db2a781a/invoke.js"></script>
+      </div>
+      <div class="banner-unit">
+        <script>
+          atOptions = {
+            'key' : '1889be24d471415252bdf847db2a781a',
+            'format' : 'iframe',
+            'height' : 250,
+            'width' : 300,
+            'params' : {}
+          };
+        </script>
+        <script src="https://www.highrevenueformat.com/1889be24d471415252bdf847db2a781a/invoke.js"></script>
+      </div>
+    </div>
+    <div class="status-badge-timer" id="timerBadge1">
+      <span>⏱️ Tunggu <strong id="valTimer1">10</strong> detik</span>
+    </div>
+  </div>
+
+  <!-- 4. CONTENT SLOT 2 (12 Detik - Ukuran Penuh Seragam 728x90) -->
+  <div class="content-slot-box" id="contentSlot2">
+    <div class="slot-label">📢 Rekomendasi 2</div>
+    <div class="slot-media-frame">
+      <script>
+        atOptions = {
+          'key' : '9a3cf3a3967a4e3fc2e4fdf6b9a3489f',
+          'format' : 'iframe',
+          'height' : 90,
+          'width' : 728,
+          'params' : {}
+        };
+      </script>
+      <script src="https://www.highrevenueformat.com/9a3cf3a3967a4e3fc2e4fdf6b9a3489f/invoke.js"></script>
+    </div>
+    <div class="status-badge-timer" id="timerBadge2">
+      <span>⏱️ Tunggu <strong id="valTimer2">12</strong> detik</span>
+    </div>
+  </div>
+
+  <!-- 5. CONTENT SLOT 3 (8 Detik - Dual Banner 300x250) -->
+  <div class="content-slot-box" id="contentSlot3">
+    <div class="slot-label">📢 Rekomendasi 3</div>
+    <div class="slot-media-frame multi-banner-frame">
+      <div class="banner-unit">
+        <script>
+          atOptions = {
+            'key' : '1889be24d471415252bdf847db2a781a',
+            'format' : 'iframe',
+            'height' : 250,
+            'width' : 300,
+            'params' : {}
+          };
+        </script>
+        <script src="https://www.highrevenueformat.com/1889be24d471415252bdf847db2a781a/invoke.js"></script>
+      </div>
+      <div class="banner-unit">
+        <script>
+          atOptions = {
+            'key' : '1889be24d471415252bdf847db2a781a',
+            'format' : 'iframe',
+            'height' : 250,
+            'width' : 300,
+            'params' : {}
+          };
+        </script>
+        <script src="https://www.highrevenueformat.com/1889be24d471415252bdf847db2a781a/invoke.js"></script>
+      </div>
+    </div>
+    <div class="status-badge-timer" id="timerBadge3">
+      <span>⏱️ Tunggu <strong id="valTimer3">8</strong> detik</span>
+    </div>
+  </div>
+
+  <!-- 6. TOMBOL RUTE GACHA (MUNCUL OTOMATIS SETELAH REKOMENDASI SELESAI) -->
+  <div class="route-action-container" id="routeButtonsGroup"></div>
+</div>
+
+<!-- NEUTRAL DIALOG OVERLAY (PENALTI JIKA SALAH KLIK - TUTUP OTOMATIS 5 DETIK) -->
+<div class="dialog-frame-layer" id="dialogPenaltyLayer">
+  <div class="dialog-surface-card">
+    <h3>🎯 Verifikasi Tambahan</h3>
+    <p style="color:#cbd5e1; margin-bottom: 16px; font-size: 14px;">Pilihan rute belum tepat. Modal ini akan <strong>menutup otomatis</strong> dalam beberapa detik.</p>
+    
+    <div style="margin:16px 0; padding:12px; background:#0d0a20; border-radius:10px; min-height: 250px; display:flex; align-items:center; justify-content:center;">
+      <script>
+        atOptions = {
+          'key' : '1889be24d471415252bdf847db2a781a',
+          'format' : 'iframe',
+          'height' : 250,
+          'width' : 300,
+          'params' : {}
+        };
+      </script>
+      <script src="https://www.highrevenueformat.com/1889be24d471415252bdf847db2a781a/invoke.js"></script>
+    </div>
+    
+    <button class="dialog-close-trigger" id="penaltyCloseTrigger" disabled>
+      Tutup Otomatis dalam <span id="penaltySecVal">5</span> detik
+    </button>
+  </div>
+</div>
+
+<!-- SOCIAL BAR ADSTERRA -->
+<script src="https://pl31189394.profitableratecpmnetwork.com/55/56/62/5556626abb21c2dfb26bfdaba0348389.js"></script>
+
+<script>
+// ============================================
+// 1. CONFIGURATION
+// ============================================
+const SMARTLINKS = [
+  "https://www.profitableratecpmnetwork.com/cb53k6wcm8?key=7eed13583d3d505b1aa241e65deb6fb7",
+  "https://www.profitableratecpmnetwork.com/bb1ic94xj9?key=7cee48daf3ca4dbf1a9ac037bf4a08d5"
+];
+
+function getRandomSmartlink() {
+  return SMARTLINKS[Math.floor(Math.random() * SMARTLINKS.length)];
+}
+
+function showNotice(msg) {
+  const box = document.getElementById('errorNotice');
+  box.textContent = msg;
+  box.classList.add('visible');
+}
+
+// ============================================
+// 2. MASTER LOOP TIMER (SLOT REKOMENDASI)
+// ============================================
+const slotCountdowns = {
+  slot1: { current: 10, badge: 'timerBadge1', valEl: 'valTimer1', done: false },
+  slot2: { current: 12, badge: 'timerBadge2', valEl: 'valTimer2', done: false },
+  slot3: { current: 8,  badge: 'timerBadge3', valEl: 'valTimer3', done: false }
+};
+
+let allSlotsCompleted = false;
+
+const masterClock = setInterval(() => {
+  let activeSlotsCount = 0;
+
+  for (const key in slotCountdowns) {
+    const slot = slotCountdowns[key];
+    if (!slot.done) {
+      slot.current--;
+      const valEl = document.getElementById(slot.valEl);
+      if (valEl) valEl.textContent = slot.current;
+
+      if (slot.current <= 0) {
+        slot.done = true;
+        const badgeEl = document.getElementById(slot.badge);
+        if (badgeEl) {
+          badgeEl.innerHTML = '<span>✅ Selesai!</span>';
+          badgeEl.classList.add('completed');
+        }
+      } else {
+        activeSlotsCount++;
+      }
+    }
+  }
+
+  // Jika ketiga slot telah selesai, munculkan tombol rute dan langsung mulai hitungan otomatis!
+  if (activeSlotsCount === 0 && !allSlotsCompleted) {
+    clearInterval(masterClock);
+    allSlotsCompleted = true;
+    startAutoRouteButtons();
+  }
+}, 1000);
+
+// ============================================
+// 3. AUTO-COUNTDOWN ROUTE BUTTONS (5s, 7s, 9s)
+// Muncul otomatis setelah rekomendasi selesai
+// ============================================
+const routeTimes = [5, 7, 9]; // Durasi baru: 5 detik, 7 detik, 9 detik
+const correctRouteIndex = Math.floor(Math.random() * routeTimes.length);
+const routeContainer = document.getElementById('routeButtonsGroup');
+
+function getDownloadParam() {
+  const url = new URL(window.location.href);
+  let param = url.searchParams.get('dl') || url.searchParams.get('s') || url.searchParams.get('data');
+  if (!param && window.location.hash) {
+    param = window.location.hash.replace(/^#dl=|^#/, '');
+  }
+  return param ? param.trim() : '';
+}
+
+// Dapatkan hash download parameter
+const hashVal = getDownloadParam();
+
+function startAutoRouteButtons() {
+  routeContainer.style.display = 'grid'; // Tampilkan area tombol saat rekomendasi selesai
+
+  routeTimes.forEach((duration, index) => {
+    const btn = document.createElement('button');
+    btn.className = 'action-route-btn';
+    btn.textContent = `Memproses... ${duration}s`;
+    btn.disabled = true;
+    routeContainer.appendChild(btn);
+
+    // Hitung mundur otomatis seketika tombol muncul
+    let remaining = duration;
+    const btnTimer = setInterval(() => {
+      remaining--;
+      if (remaining > 0) {
+        btn.textContent = `Memproses... ${remaining}s`;
+      } else {
+        clearInterval(btnTimer);
+        // Begitu 0s: Langsung aktif siap diklik 1x!
+        btn.textContent = 'KLIK UNTUK BUKA';
+        btn.classList.add('active');
+        btn.disabled = false;
+
+        btn.onclick = () => {
+          if (index === correctRouteIndex) {
+            // JIKA BENAR: Lanjut ke Safelink 2
+            btn.textContent = '🔄 Mengalihkan...';
+            btn.disabled = true;
+            setTimeout(() => {
+              const currentParam = getDownloadParam();
+              const currentDir = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'));
+              window.location.href = `${window.location.origin}${currentDir}/safelink2.html#dl=${currentParam}`;
+            }, 600);
+          } else {
+            // JIKA SALAH: Tembak Smartlink + Tampilkan Penalty Dialog (Tutup Otomatis 5s)
+            const targetSmartlink = getRandomSmartlink();
+            if (targetSmartlink && targetSmartlink.startsWith('http')) {
+              window.open(targetSmartlink, '_blank');
+            }
+            openPenaltyDialog();
+            btn.textContent = '❌ Belum Beruntung';
+            btn.classList.remove('active');
+            btn.style.background = 'linear-gradient(135deg,#dc2626,#b91c1c)';
+            btn.style.borderColor = '#ef4444';
+            btn.disabled = true;
+          }
+        };
+      }
+    }, 1000);
+  });
+}
+
+// ============================================
+// 4. PENALTY DIALOG CONTROLLER (AUTO-CLOSE 5 DETIK MURNI)
+// ============================================
+let penaltyTimerInstance = null;
+
+function openPenaltyDialog() {
+  const dialog = document.getElementById('dialogPenaltyLayer');
+  dialog.classList.add('visible');
+  document.body.style.overflow = 'hidden';
+
+  let penaltyTime = 5;
+  const triggerBtn = document.getElementById('penaltyCloseTrigger');
+  const secEl = document.getElementById('penaltySecVal');
+  
+  if (triggerBtn) {
+    triggerBtn.disabled = true;
+    triggerBtn.innerHTML = 'Tutup Otomatis dalam <span id="penaltySecVal">' + penaltyTime + '</span> detik';
+  }
+
+  if (penaltyTimerInstance) clearInterval(penaltyTimerInstance);
+
+  penaltyTimerInstance = setInterval(() => {
+    penaltyTime--;
+    const liveSecEl = document.getElementById('penaltySecVal');
+    if (liveSecEl) liveSecEl.textContent = penaltyTime;
+    
+    if (penaltyTime <= 0) {
+      clearInterval(penaltyTimerInstance);
+      closePenaltyDialog();
+    }
+  }, 1000);
+}
+
+function closePenaltyDialog() {
+  const dialog = document.getElementById('dialogPenaltyLayer');
+  dialog.classList.remove('visible');
+  document.body.style.overflow = 'auto';
+  if (penaltyTimerInstance) clearInterval(penaltyTimerInstance);
+}
+
+document.getElementById('penaltyCloseTrigger').onclick = closePenaltyDialog;
+
+// Bootstrap check
+if (!hashVal) {
+  showNotice('⚠️ Parameter unduhan tidak valid atau telah kedaluwarsa.');
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🔐 Encrypt Gist Tool — Enkripsi Berlapis</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #0a0a0a;
+  color: #f3f4f6;
+  padding: 20px;
+  min-height: 100vh;
+}
+.container { max-width: 720px; margin: 0 auto; }
+h1 { color: #f97316; font-size: 1.8rem; margin-bottom: 6px; text-align: center; }
+.subtitle { color: #9ca3af; text-align: center; margin-bottom: 24px; font-size: 14px; }
+.card {
+  background: #121214;
+  border: 1px solid #2c2d33;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 16px;
+}
+label {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: #f97316;
+  font-size: 14px;
+}
+input, textarea {
+  width: 100%;
+  padding: 12px;
+  background: #1a1a1e;
+  border: 1px solid #2c2d33;
+  border-radius: 8px;
+  color: #f3f4f6;
+  font-size: 14px;
+  font-family: 'Consolas', 'Courier New', monospace;
+  margin-bottom: 16px;
+  outline: none;
+}
+input:focus, textarea:focus { border-color: #f97316; }
+textarea { resize: vertical; min-height: 80px; }
+button {
+  padding: 14px 24px;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 100%;
+  margin-bottom: 10px;
+}
+.btn-encrypt { background: #f97316; color: #fff; }
+.btn-encrypt:hover { background: #ea580c; }
+.btn-test { background: #10b981; color: #fff; }
+.btn-test:hover { background: #059669; }
+.btn-copy {
+  background: #3b82f6; color: #fff;
+  padding: 8px 16px;
+  font-size: 12px;
+  width: auto;
+  display: inline-block;
+  margin-top: 6px;
+  border-radius: 6px;
+}
+.btn-copy:hover { background: #2563eb; }
+.output-box {
+  background: #0a0a0a;
+  border: 1px solid #2c2d33;
+  border-radius: 8px;
+  padding: 12px;
+  margin-top: 8px;
+  margin-bottom: 4px;
+  word-break: break-all;
+  font-family: 'Consolas', 'Courier New', monospace;
+  font-size: 13px;
+  color: #22c55e;
+  min-height: 36px;
+  user-select: all;
+}
+.result-section { display: none; }
+.result-section.show { display: block; }
+.info {
+  background: rgba(249, 115, 22, 0.1);
+  border-left: 3px solid #f97316;
+  padding: 12px 16px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  font-size: 13px;
+  color: #d1d5db;
+  line-height: 1.6;
+}
+.layers-badge {
+  display: inline-block;
+  background: #f97316;
+  color: #fff;
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  margin-left: 6px;
+}
+.status { margin-top: 10px; padding: 10px 14px; border-radius: 8px; font-size: 13px; }
+.status.success { background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
+.status.error { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
+.layer-diagram {
+  background: #0e0e10;
+  border: 1px solid #2c2d33;
+  border-radius: 8px;
+  padding: 14px;
+  margin-bottom: 20px;
+  font-size: 12px;
+  color: #9ca3af;
+  line-height: 1.8;
+  font-family: 'Consolas', 'Courier New', monospace;
+}
+.layer-diagram .arrow { color: #f97316; }
+.layer-diagram .layer { color: #22c55e; }
+hr { border: none; border-top: 1px solid #2c2d33; margin: 20px 0; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🔐 Encrypt Gist Tool</h1>
+  <p class="subtitle">Enkripsi berlapis untuk Key + Gist URL — Hanya untuk penggunaan lokal</p>
+
+  <div class="info">
+    ⚠️ <strong>JANGAN DEPLOY file ini.</strong> Gunakan hanya di browser lokal Anda.<br>
+    Masukkan Key dan Gist URL, klik Encrypt, lalu paste hasilnya ke <code>index.html</code>.<br>
+    Setelah itu jalankan <code>build.ps1</code> untuk regenerate <code>_worker.js</code>.
+  </div>
+
+  <!-- Diagram Layer -->
+  <div class="layer-diagram">
+    <strong style="color:#f97316">📐 Skema Enkripsi:</strong><br><br>
+    <strong>Key (4 Layer):</strong><br>
+    PlainKey <span class="arrow">→</span> <span class="layer">XOR(salt)</span> <span class="arrow">→</span> <span class="layer">Base64</span> <span class="arrow">→</span> <span class="layer">Reverse</span> <span class="arrow">→</span> <span class="layer">Base64</span> <span class="arrow">→</span> EncryptedKey<br><br>
+    <strong>Gist URL (7 Layer):</strong><br>
+    PlainURL <span class="arrow">→</span> <span class="layer">XOR(key)</span> <span class="arrow">→</span> <span class="layer">Base64</span> <span class="arrow">→</span> <span class="layer">Reverse</span> <span class="arrow">→</span> <span class="layer">PosXOR(key)</span> <span class="arrow">→</span> <span class="layer">Base64</span> <span class="arrow">→</span> <span class="layer">CharSub</span> <span class="arrow">→</span> <span class="layer">Base64</span> <span class="arrow">→</span> EncryptedURL
+  </div>
+
+  <div class="card">
+    <label>🔑 Master Key <small style="color:#9ca3af">(bebas, diingat sendiri — JANGAN sampai lupa)</small></label>
+    <input type="text" id="inputKey" placeholder="Contoh: MySecretKey2026!@#" autocomplete="off">
+
+    <label>🔗 Gist URL <small style="color:#9ca3af">(Raw URL lengkap dari GitHub Gist)</small></label>
+    <input type="text" id="inputUrl" placeholder="https://gist.githubusercontent.com/user/id/raw/data.json" autocomplete="off">
+
+    <button class="btn-encrypt" onclick="doEncrypt()">🔐 Encrypt Berlapis (Key 4 Layer + URL 7 Layer)</button>
+    <button class="btn-test" onclick="doTestDecrypt()">🧪 Test Dekripsi (Verifikasi Round-Trip)</button>
+  </div>
+
+  <div class="result-section" id="resultSection">
+    <div class="card">
+      <label>📦 Encrypted Key <span class="layers-badge">4 Layer</span></label>
+      <div class="output-box" id="outKey">—</div>
+      <button class="btn-copy" onclick="copyEl('outKey')">📋 Copy Encrypted Key</button>
+
+      <hr>
+
+      <label>📦 Encrypted Gist URL <span class="layers-badge">7 Layer</span></label>
+      <div class="output-box" id="outUrl">—</div>
+      <button class="btn-copy" onclick="copyEl('outUrl')">📋 Copy Encrypted URL</button>
+
+      <hr>
+
+      <label>📋 Kode untuk di-paste ke <code>index.html</code> (ganti baris <code>_ek</code> dan <code>_eu</code>)</label>
+      <textarea id="outCode" rows="4" readonly style="color:#60a5fa"></textarea>
+      <button class="btn-copy" onclick="copyEl('outCode')">📋 Copy Kode Lengkap</button>
+    </div>
+  </div>
+
+  <div id="testResult"></div>
+</div>
+
+<script>
+// ============================================
+// ENKRIPSI & DEKRIPSI FUNCTIONS
+// Salt harus IDENTIK dengan yang ada di index.html (_GV._s)
+// ============================================
+var SALT_PARTS = ['F00D','13_v','1d30','_s4L','t_26','_xK9'];
+var SALT = SALT_PARTS.join('');
+
+var NORMAL_ALPHA  = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+var SHIFTED_ALPHA = 'NOPQRSTUVWXYZABCDEFGHIJKLMnopqrstuvwxyzabcdefghijklm5678901234+/=';
+
+function xorStrings(data, key) {
+  var result = '';
+  for (var i = 0; i < data.length; i++) {
+    result += String.fromCharCode(data.charCodeAt(i) ^ key.charCodeAt(i % key.length));
+  }
+  return result;
+}
+
+function positionalXor(data, key) {
+  var result = '';
+  for (var i = 0; i < data.length; i++) {
+    var k = (key.charCodeAt(i % key.length) + i) % 256;
+    result += String.fromCharCode(data.charCodeAt(i) ^ k);
+  }
+  return result;
+}
+
+function reverseStr(s) {
+  return s.split('').reverse().join('');
+}
+
+function charSubstitute(s) {
+  var result = '';
+  for (var i = 0; i < s.length; i++) {
+    var idx = NORMAL_ALPHA.indexOf(s[i]);
+    result += idx !== -1 ? SHIFTED_ALPHA[idx] : s[i];
+  }
+  return result;
+}
+
+function charUnsubstitute(s) {
+  var result = '';
+  for (var i = 0; i < s.length; i++) {
+    var idx = SHIFTED_ALPHA.indexOf(s[i]);
+    result += idx !== -1 ? NORMAL_ALPHA[idx] : s[i];
+  }
+  return result;
+}
+
+// ============================================
+// ENCRYPT KEY — 4 Layers
+// Plain → XOR(salt) → Base64 → Reverse → Base64
+// ============================================
+function encryptKey(plainKey) {
+  var s1 = xorStrings(plainKey, SALT);     // Layer 1: XOR dengan salt
+  var s2 = btoa(s1);                        // Layer 2: Base64 encode
+  var s3 = reverseStr(s2);                  // Layer 3: Reverse string
+  var s4 = btoa(s3);                        // Layer 4: Base64 encode
+  return s4;
+}
+
+// ============================================
+// DECRYPT KEY — 4 Layers (terbalik)
+// ============================================
+function decryptKey(encKey) {
+  var s1 = atob(encKey);                    // Undo Layer 4
+  var s2 = reverseStr(s1);                  // Undo Layer 3
+  var s3 = atob(s2);                        // Undo Layer 2
+  var s4 = xorStrings(s3, SALT);            // Undo Layer 1
+  return s4;
+}
+
+// ============================================
+// ENCRYPT URL — 7 Layers
+// Plain → XOR(key) → Base64 → Reverse → PosXOR(key) → Base64 → CharSub → Base64
+// ============================================
+function encryptUrl(plainUrl, plainKey) {
+  var s1 = xorStrings(plainUrl, plainKey);  // Layer 1: XOR dengan key
+  var s2 = btoa(s1);                         // Layer 2: Base64 encode
+  var s3 = reverseStr(s2);                   // Layer 3: Reverse string
+  var s4 = positionalXor(s3, plainKey);      // Layer 4: Positional XOR
+  var s5 = btoa(s4);                         // Layer 5: Base64 encode
+  var s6 = charSubstitute(s5);               // Layer 6: Character substitution
+  var s7 = btoa(s6);                         // Layer 7: Base64 encode
+  return s7;
+}
+
+// ============================================
+// DECRYPT URL — 7 Layers (terbalik)
+// ============================================
+function decryptUrl(encUrl, plainKey) {
+  var s1 = atob(encUrl);                     // Undo Layer 7
+  var s2 = charUnsubstitute(s1);             // Undo Layer 6
+  var s3 = atob(s2);                         // Undo Layer 5
+  var s4 = positionalXor(s3, plainKey);      // Undo Layer 4 (self-inverse)
+  var s5 = reverseStr(s4);                   // Undo Layer 3
+  var s6 = atob(s5);                         // Undo Layer 2
+  var s7 = xorStrings(s6, plainKey);         // Undo Layer 1
+  return s7;
+}
+
+// ============================================
+// UI HANDLERS
+// ============================================
+var lastEncKey = '';
+var lastEncUrl = '';
+
+function doEncrypt() {
+  var key = document.getElementById('inputKey').value.trim();
+  var url = document.getElementById('inputUrl').value.trim();
+
+  if (!key) { alert('⚠️ Masukkan Master Key terlebih dahulu!'); return; }
+  if (!url) { alert('⚠️ Masukkan Gist URL terlebih dahulu!'); return; }
+
+  try {
+    lastEncKey = encryptKey(key);
+    lastEncUrl = encryptUrl(url, key);
+
+    document.getElementById('outKey').textContent = lastEncKey;
+    document.getElementById('outUrl').textContent = lastEncUrl;
+
+    var code = "      _ek:'" + lastEncKey + "',\n      _eu:'" + lastEncUrl + "',";
+    document.getElementById('outCode').value = code;
+
+    document.getElementById('resultSection').classList.add('show');
+    document.getElementById('testResult').innerHTML = '';
+  } catch (e) {
+    alert('❌ Error saat enkripsi: ' + e.message);
+  }
+}
+
+function doTestDecrypt() {
+  if (!lastEncKey || !lastEncUrl) {
+    alert('⚠️ Lakukan enkripsi terlebih dahulu!');
+    return;
+  }
+
+  try {
+    var decKey = decryptKey(lastEncKey);
+    var decUrl = decryptUrl(lastEncUrl, decKey);
+
+    var origKey = document.getElementById('inputKey').value.trim();
+    var origUrl = document.getElementById('inputUrl').value.trim();
+
+    var keyOk = (decKey === origKey);
+    var urlOk = (decUrl === origUrl);
+
+    var html = '<div class="card">';
+    html += '<label>🧪 Hasil Test Dekripsi</label>';
+
+    if (keyOk && urlOk) {
+      html += '<div class="status success">✅ BERHASIL! Key dan URL terdekripsi dengan sempurna. Siap dipaste ke index.html.</div>';
+    } else {
+      html += '<div class="status error">❌ GAGAL! Hasil dekripsi tidak cocok dengan input asli.</div>';
+    }
+
+    html += '<div class="output-box" style="margin-top:12px;color:' + (keyOk ? '#22c55e' : '#ef4444') + '">Key: ' + (keyOk ? '✅' : '❌') + ' ' + decKey + '</div>';
+    html += '<div class="output-box" style="color:' + (urlOk ? '#22c55e' : '#ef4444') + '">URL: ' + (urlOk ? '✅' : '❌') + ' ' + decUrl + '</div>';
+    html += '</div>';
+
+    document.getElementById('testResult').innerHTML = html;
+  } catch (e) {
+    document.getElementById('testResult').innerHTML = '<div class="card"><div class="status error">❌ Error dekripsi: ' + e.message + '</div></div>';
+  }
+}
+
+function copyEl(id) {
+  var el = document.getElementById(id);
+  var text = el.value !== undefined && el.value !== '' ? el.value : el.textContent;
+  navigator.clipboard.writeText(text).then(function() {
+    alert('✅ Berhasil disalin ke clipboard!');
+  }).catch(function() {
+    // Fallback
+    var range = document.createRange();
+    range.selectNodeContents(el);
+    var sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+    document.execCommand('copy');
+    alert('✅ Berhasil disalin!');
+  });
+}
+</script>
+</body>
+</html>
