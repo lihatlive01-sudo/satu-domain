@@ -1,0 +1,11 @@
+{
+  // Konfigurasi Cloudflare Worker (satu domain: web + generator + player)
+  // File ini dibaca otomatis saat deploy via "Connect to Git".
+  // "main" = kode worker yang berjalan; "assets" = file statis yang dilayani.
+  "name": "colek-web",
+  "main": "_worker.js",
+  "compatibility_date": "2025-10-01",
+  "assets": {
+    "directory": "."
+  }
+}

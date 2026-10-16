@@ -1,0 +1,5 @@
+# File yang TIDAK diupload sebagai aset statis
+# (_worker.js adalah kode worker-nya, bukan file web)
+_worker.js
+wrangler.jsonc
+CATATAN_DEPLOY.txt
