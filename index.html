@@ -1121,43 +1121,26 @@
   <!-- JavaScript -->
   <script>
     // ============================================
-    // 🔐 ENKRIPSI GIST BERLAPIS (KEY 4 LAYER + URL 7 LAYER)
-    // ============================================
-    var _GV={
-       _ek:'PVVVYkM4VkpiVkVK',
-      _eu:'SzVmZldHNkVEVGJhRW1aNFJLdEhPUGlrWW1va09ONXBUM3NnQzIwK1NEUUo3QXdJa09rY1BBOEgrcDhzQkRqODNwWVY2cjk4QkZhQTBDR3MrbXBwWnIyLzdoc3dUdzlobC9sUjJzeUIwNG84dDNLbHQyL1hsNCtweUNGY2hoc055ZWUzdWNtVThxN1JhMEJSYUFtdTlZRkl3MFBtMEI4M2llKzhhMWlPaytQTmVYaDZjQVUxM2RsV2MxRjd3Y1hVeVJCbmdqPT0=',
-      _s:['F00D','13_v','1d30','_s4L','t_26','_xK9'],
-      _gs:function(){return this._s.join('')},
-      _b:function(s){return atob(s)},
-      _r:function(s){for(var o='',i=s.length-1;i>=0;i--)o+=s[i];return o},
-      _x:function(d,k){for(var o='',i=0;i<d.length;i++)o+=String.fromCharCode(d.charCodeAt(i)^k.charCodeAt(i%k.length));return o},
-      _p:function(d,k){for(var o='',i=0;i<d.length;i++)o+=String.fromCharCode(d.charCodeAt(i)^((k.charCodeAt(i%k.length)+i)%256));return o},
-      _us:function(s){var a='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=',c='NOPQRSTUVWXYZABCDEFGHIJKLMnopqrstuvwxyzabcdefghijklm5678901234+/=';for(var o='',i=0;i<s.length;i++){var x=c.indexOf(s[i]);o+=x!==-1?a[x]:s[i]}return o},
-      dk:function(){try{return this._x(this._b(this._r(this._b(this._ek))),this._gs())}catch(e){return null}},
-      du:function(k){try{return this._x(this._b(this._r(this._p(this._b(this._us(this._b(this._eu))),k))),k)}catch(e){return null}},
-      g:function(){if(this._ek==='BELUM_DISET'||this._eu==='BELUM_DISET')return null;var k=this.dk();return k?this.du(k):null}
-    };
-
-    // ============================================
+        // Gist master kini HANYA dibaca server-side via /api/videos (secret GIST_MASTER_URL).
+// ============================================
     // 📡 FETCH DATA VIDEO (encrypted gist → fallback /api/videos)
     // ============================================
     var allVideoPool = [];
 
     async function fetchMasterGist() {
-      var urls = [];
-      try { var u = _GV.g(); if (u) urls.push(u); } catch(e) {}
-      urls.push("/api/videos");
-      for (var i = 0; i < urls.length; i++) {
-        try {
-          var res = await fetch(urls[i]);
-          if (!res.ok) continue;
+      // Daftar video HANYA dari /api/videos (worker membaca Gist via secret
+      // GIST_MASTER_URL -> fallback data/videos.json). URL Gist tidak lagi
+      // ada di halaman ini, jadi tidak bisa diambil orang.
+      try {
+        var res = await fetch("/api/videos");
+        if (res.ok) {
           var data = await res.json();
           if (data && typeof data === "object") {
             allVideoPool = flattenAllVideos(data);
             return;
           }
-        } catch (e) { continue; }
-      }
+        }
+      } catch (e) {}
     }
 
     function flattenAllVideos(data) {
@@ -1179,9 +1162,9 @@
     // 📧 PENGATURAN KONTAK EMAIL
     // ============================================
     var MY_CONTACT_EMAIL = "cs@raba.my.id";
-    var MY_EMAIL_SUBJECT = "Pemasangan Iklan - ww1.raba";
+    var MY_EMAIL_SUBJECT = "Pemasangan Iklan - short.raba.my.id";
     var MY_EMAIL_BODY = "Halo Admin,\n\n" +
-      "Saya tertarik untuk memasang iklan atau sponsor di website ww1.raba.\n" +
+      "Saya tertarik untuk memasang iklan atau sponsor di website short.raba.my.id.\n" +
       "Mohon informasi mengenai ketersediaan slot dan tarif iklan yang berlaku.\n\n" +
       "Terima kasih.";
 
@@ -1648,7 +1631,7 @@
     // Klik tepat pada tombol -> tetap ke tujuan tombol.
     // GANTI URL-nya di bawah jika ingin mengarah ke alamat lain.
     // ============================================
-    var SLOT4_BANNER_URL = "https://ww1.raba.my.id/";
+    var SLOT4_BANNER_URL = "https://short.raba.my.id/";
 
     (function pasangKlikBannerSlot4() {
       var banner = document.querySelector(".slot-iklan-judol");

@@ -1,5 +1,5 @@
 // ============================================================
-// _worker.js TERPADU — Web Streaming + Generator (SATU DOMAIN)
+// _worker.js TERPADU — Web Streaming + Generator (SATU DOMAIN) [FIX 2026-10-18: fallback data/videos.json diperkuat + file sensitif dilindungi]
 // ============================================================
 // Rute yang dilayani worker ini:
 //   /api/videos      -> daftar video untuk web.
@@ -61,20 +61,23 @@ export default {
           }
         } catch (e) { /* lanjut ke fallback */ }
       }
-      // b) dari file statis data/videos.json
+      // b) dari file statis data/videos.json (SPAREPART - dipakai saat Gist gagal dibaca)
       if (env && env.ASSETS) {
         try {
-          const r = await env.ASSETS.fetch(new Request(new URL('/data/videos.json', url).toString(), request));
+          const assetUrl = new URL('/data/videos.json', url.origin).toString();
+          const r = await env.ASSETS.fetch(new Request(assetUrl, { method: 'GET', headers: { accept: 'application/json' } }));
           if (r && r.ok) {
             const txt = await r.text();
-            return new Response(txt, {
-              headers: Object.assign(
-                { 'content-type': 'application/json;charset=UTF-8', 'cache-control': 'public, max-age=300' },
-                CORS
-              ),
-            });
+            if (txt && txt.trim().length > 2) {
+              return new Response(txt, {
+                headers: Object.assign(
+                  { 'content-type': 'application/json;charset=UTF-8', 'cache-control': 'public, max-age=300' },
+                  CORS
+                ),
+              });
+            }
           }
-        } catch (e) { /* lanjut */ }
+        } catch (e) { /* lanjut ke [] */ }
       }
       return new Response('[]', {
         headers: Object.assign({ 'content-type': 'application/json;charset=UTF-8' }, CORS),
@@ -213,6 +216,11 @@ export default {
         }
       }
       // Lolos (atau secret belum dipasang) -> lanjut ke file statis di bawah.
+    }
+
+    // ---------- 4b. LINDUNGI FILE SENSITIF (jangan sajikan sebagai aset statis) ----------
+    if (lp === '/_worker.js' || lp === '/wrangler.jsonc' || lp === '/wrangler.toml' || lp === '/.assetsignore') {
+      return new Response('Not found', { status: 404 });
     }
 
     // ---------- 5. FILE STATIS ----------

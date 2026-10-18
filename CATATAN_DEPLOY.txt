@@ -1,63 +1,71 @@
-PAKET SATU DOMAIN — Web Streaming + Generator + Player
-=====================================================
-Struktur:
-  /                  -> web streaming (index.html)
-  /player.html       -> player (dimuat web dalam iframe)
-  /safelink1.html, /safelink2.html -> safelink download
-  /generator/        -> generator (terproteksi)
-  /generator/config.js -> password "tampilan eksklusif" generator
-  /api/videos        -> daftar video web (otomatis)
-  /data/videos.json  -> daftar video cadangan (bisa diedit langsung)
+PAKET PERBAIKAN short.raba.my.id v2 (2026-10-18)
+=============================================
+Menggantikan short-raba-fix-v1.zip. Isi v1 + 1 perubahan besar:
+URL GIST DIHAPUS DARI HALAMAN (tidak bisa lagi diambil orang).
 
-CARA DEPLOY (GitHub -> Cloudflare, push = deploy otomatis)
-----------------------------------------------------------
-1. Upload SEMUA file/folder apa adanya ke repo GitHub.
-2. Hubungkan repo ke Cloudflare (Pages / Worker-with-assets).
-3. Tidak ada build step. Tidak ada setting khusus.
+CARA UPLOAD (via web GitHub, seperti biasa):
+1. Buka repo yg tersambung ke short.raba.my.id -> "Add file" -> "Upload files".
+2. Upload SEMUA file dalam zip ini SEKALIGUS:
+   - _worker.js            (timpa yg lama)
+   - .assetsignore         (file BARU)
+   - index.html            (timpa yg lama)
+   - data/videos.json      (timpa yg lama)
+   PENTING: data/videos.json harus tetap di dalam folder "data".
+   Upload _worker.js, .assetsignore, index.html dulu di root repo,
+   lalu buka folder "data" -> Upload files -> upload videos.json di sana.
+3. Commit. Tunggu deploy Cloudflare selesai (cek menu Deployments).
 
-KUNCI GENERATOR (secret Cloudflare) — pengaman SERIUS
-----------------------------------------------------
-1. Buat secret bernama GENERATOR_KEY berisi kata kunci rahasiamu:
-     wrangler secret put GENERATOR_KEY
-   (lalu ketik kata kuncinya saat diminta)
-   ATAU via dashboard: project -> Settings -> Variables -> Add secret.
-2. Buka SEKALI:  https://domainmu/generator/?key=KATA_KUNCI_MU
-   -> cookie 30 hari terpasang, selanjutnya buka /generator/ biasa.
-3. Selama GENERATOR_KEY belum dipasang, proteksi worker nonaktif
-   (tidak mengunci siapa pun).
+WAJIB SETELAH DEPLOY — PASANG SECRET GIST (hanya kamu yg bisa):
+Mulai v2, browser pengunjung TIDAK LAGI membaca Gist langsung.
+ yg membaca Gist adalah WORKER, lewat secret ini:
+1. Dashboard Cloudflare -> Workers & Pages -> project short.raba.my.id
+   -> Settings -> Variables and Secrets -> Add.
+2. Name: GIST_MASTER_URL | Type: Secret |
+   Value: URL mentah Gist-mu (mis. https://gist.githubusercontent.com/...)
+3. Save, lalu JANGAN LUPA: redeploy (Deployments -> deployment terbaru
+   -> Retry deployment, atau push commit kosong) agar secret terbaca.
+TANPA secret ini, /api/videos hanya menyajikan data/videos.json
+(sparepart berisi 1 contoh) — web-mu tampil tapi daftar videonya contoh.
 
-PASSWORD EKSKLUSIF (tampilan saja)
-----------------------------------
-1. Edit generator/config.js -> isi GEN_PASSWORD = "isi-password-mu";
-2. Buka generator -> muncul form password sebelum bisa dipakai.
-3. Kosongkan ("") = terbuka. Catatan jujur: ini client-side,
-   hanya untuk kesan eksklusif, bukan keamanan serius.
+ISI PAKET & YG DIPERBAIKI:
+1. index.html
+   a) Blok _GV (URL Gist terenkripsi + kode dekripsinya, ~1500 karakter)
+      DIHAPUS TOTAL dari halaman. Tidak ada lagi alamat Gist di file
+      publik mana pun -> orang tidak bisa mengambil Gist-mu.
+   b) fetchMasterGist() kini HANYA memanggil /api/videos.
+   c) SLOT4_BANNER_URL: https://ww1.raba.my.id/ -> https://short.raba.my.id/
+   d) Email kontak iklan: "ww1.raba" -> "short.raba.my.id"
+      (subject & isi email).
+2. _worker.js (2 perbaikan di file lama):
+   a) Rute /api/videos, bagian baca data/videos.json DIPERKUAT.
+      Penyebab bug lama: worker membuat request dengan menempelkan
+      request pengunjung apa adanya, yg di sebagian kasus gagal
+      diam-diam -> mengembalikan []. Sekarang memakai request GET
+      bersih + memeriksa isi tidak kosong. Urutan: GIST_MASTER_URL
+      -> data/videos.json -> [].
+   b) File sensitif (_worker.js, wrangler.jsonc, wrangler.toml,
+      .assetsignore) kini dijawab 404 oleh worker -> source code
+      worker TIDAK BISA lagi diunduh orang.
+3. .assetsignore : lapisan cadangan agar file worker tidak ikut
+   tersaji sebagai file statis.
+4. data/videos.json : TEMPLATE sparepart (kategori "CONTOH", 1 entri).
+   Dipakai HANYA jika worker gagal membaca Gist. Ganti kategorinya
+   dengan daftarmu, format SAMA seperti Gist:
+   { "nama-kategori": [ {"id":..., "title":..., "play":...}, ... ] }.
 
-DAFTAR VIDEO (/api/videos)
---------------------------
-Prioritas: env var GIST_MASTER_URL (URL raw gist, bisa secret)
-        -> file data/videos.json
-        -> [] (kosong)
-Format entri (sudah kompatibel dengan generator):
-  { "id": "unik", "title": "...", "play": "https://domainmu/player.html?s=...",
-    "download": "...", "Source": "..." }
-Bisa juga format array langsung atau object berkategori
-{ "indonesia": [...], "asia": [...], "western": [...] }.
+VERIFIKASI SETELAH DEPLOY:
+1. https://short.raba.my.id/api/videos -> tampil ISI Gist-mu
+   (bukan [] dan bukan contoh). Jika masih contoh: secret belum
+   terbaca -> redeploy ulang.
+2. https://short.raba.my.id/_worker.js -> 404 Not found.
+3. View-source index.html (Ctrl+U) -> cari "_GV" dan "ww1":
+   tidak boleh ada hasil.
+4. Klik Next Video beberapa kali -> video berganti normal.
 
-ALUR KERJA
-----------
-1. Buka /generator/ -> tempel link video -> dapat link player + JSON.
-2. Tempel JSON sebagai entri ke gist / data/videos.json (field "play").
-3. Web otomatis memutarnya di iframe; fullscreen gate bisa pause/play
-   player milik sendiri via protokol postMessage (colekGate).
-
-YANG BERUBAH DARI VERSI LAMA
------------------------------
-- Deteksi adblock web v2: anti false-positive di HP (fail-open).
-  Adblock beneran tetap ditahan di pintu; hasil meragukan tetap boleh masuk.
-- Player: Plyr tetap via CDN (jsdelivr, lebih stabil di HP),
-  init diberi retry 8x@500ms sebelum fallback native.
-- Player kini NURUT perintah pause/play dari web (dulu "tuli").
-- Satu domain: link play selalu benar tanpa setting.
-- Tidak ada lagi HTML yang diduplikasi di dalam _worker.js
-  (dulu patch harus di dua file).
+CHECKLIST SEBELUM KOMERSIL MALAM INI:
+[ ] Paket v2 ter-upload & deploy sukses
+[ ] Secret GIST_MASTER_URL terpasang & /api/videos berisi Gist asli
+[ ] /_worker.js = 404
+[ ] Bot Fight Mode: dashboard -> Security -> Bots -> ON (gratis)
+[ ] Password gate & iklan tampil normal di tab incognito
+[ ] (Nanti, saat hapus ww1) hapus repo + hapus project Cloudflare-nya
