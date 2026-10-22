@@ -619,7 +619,7 @@ async function resolveTwitterVideo(inputStr) {
   if (!match) return null;
   const tweetId = match[1];
 
-  // 1. Coba Worker API internal
+  // 1. Coba Worker API internal (server-side, sudah punya fallback ganda)
   try {
     const res = await fetch(`/api/resolve-x?status=${tweetId}`);
     if (res.ok) {
@@ -628,23 +628,50 @@ async function resolveTwitterVideo(inputStr) {
     }
   } catch(e) {}
 
-  // 2. Fallback ke fxtwitter API langsung
-  try {
-    const res = await fetch(`https://api.fxtwitter.com/i/status/${tweetId}`);
-    if (res.ok) {
+  // Helper: pilih varian MP4 paling dekat 720p
+  const pickBest = (variants) => {
+    if (!variants || !variants.length) return null;
+    const mp4s = variants.filter(v => v && v.url && /video\/mp4/.test(v.content_type || ''));
+    const pool = mp4s.length ? mp4s : variants.filter(v => v && v.url);
+    if (!pool.length) return null;
+    let best = pool[0], bestScore = Infinity;
+    for (const v of pool) {
+      const m = (v.url || '').match(/\/(\d+)x(\d+)\//);
+      const score = Math.abs((m ? parseInt(m[1], 10) : 0) - 1280);
+      if (score < bestScore) { bestScore = score; best = v; }
+    }
+    return best.url || null;
+  };
+  const cleanTitle = t => (t ? t.replace(/https:\/\/t\.co\/\w+/g, '').trim().slice(0, 100) : 'Video X');
+
+  // 2 & 3. Fallback langsung ke API metadata publik dari browser
+  const metas = [
+    { url: `https://api.fxtwitter.com/i/status/${tweetId}`, kind: 'fx' },
+    { url: `https://api.vxtwitter.com/i/status/${tweetId}`, kind: 'vx' },
+  ];
+  for (const m of metas) {
+    try {
+      const res = await fetch(m.url);
+      const ct = res.headers.get('content-type') || '';
+      if (!res.ok || ct.indexOf('json') === -1) continue; // kena tantangan bot -> lewati
       const data = await res.json();
-      if (data && data.tweet) {
-        const videos = data.tweet.media?.videos || [];
-        const videoUrl = videos.length > 0 ? (videos[0].url || (videos[0].variants && videos[0].variants[0]?.url)) : null;
-        if (videoUrl) {
-          return {
-            videoUrl: videoUrl,
-            title: data.tweet.text ? data.tweet.text.replace(/https:\/\/t\.co\/\w+/g, '').trim().slice(0, 100) : 'Video X'
-          };
+      if (m.kind === 'fx' && data && data.tweet) {
+        const videos = (data.tweet.media && data.tweet.media.videos) || [];
+        if (videos.length) {
+          const variants = (videos[0].variants && videos[0].variants.length)
+            ? videos[0].variants
+            : (videos[0].url ? [{ url: videos[0].url, content_type: 'video/mp4' }] : []);
+          const url = pickBest(variants);
+          if (url) return { videoUrl: url, title: cleanTitle(data.tweet.text), thumbnail: videos[0].thumbnail_url || null };
         }
       }
-    }
-  } catch(e) {}
+      if (m.kind === 'vx' && data && data.hasMedia) {
+        const ext = (data.media_extended && data.media_extended.length) ? data.media_extended[0] : null;
+        const url = ext ? ext.url : ((data.mediaURLs && data.mediaURLs[0]) || null);
+        if (url) return { videoUrl: url, title: cleanTitle(data.text), thumbnail: ext ? ext.thumbnail_url : null };
+      }
+    } catch(e) {}
+  }
 
   return null;
 }
