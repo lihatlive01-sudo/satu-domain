@@ -94,31 +94,145 @@ export default {
         return jsonResp({ error: 'ID Tweet tidak ditemukan' }, 400);
       }
 
-      try {
-        const resp = await fetch('https://api.fxtwitter.com/i/status/' + tweetId, {
-          headers: { 'User-Agent': 'Mozilla/5.0' },
+      // Pilih varian MP4 paling dekat ke 720p (hemat), bukan 4K pertama.
+      function pickBestMp4(variants) {
+        if (!variants || variants.length === 0) return null;
+        const mp4s = variants.filter(function (v) {
+          return v && v.url && /video\/mp4/.test(v.content_type || '');
         });
-        const data = await resp.json();
-        if (data && data.tweet) {
-          const videos = (data.tweet.media && data.tweet.media.videos) || [];
-          const videoUrl =
-            videos.length > 0
-              ? videos[0].url || (videos[0].variants && videos[0].variants[0] && videos[0].variants[0].url)
-              : null;
-          return jsonResp({
-            success: true,
-            title: data.tweet.text
-              ? data.tweet.text.replace(/https:\/\/t\.co\/\w+/g, '').trim().slice(0, 100)
-              : 'Video X',
-            videoUrl: videoUrl,
-            thumbnail:
-              (videos[0] && videos[0].thumbnail_url) || null,
-          });
-        }
-        return jsonResp({ error: 'Tweet tidak memiliki video' }, 404);
-      } catch (err) {
-        return jsonResp({ error: err.message }, 500);
+        const pool = mp4s.length ? mp4s : variants.filter(function (v) { return v && v.url; });
+        if (!pool.length) return null;
+        let best = pool[0], bestScore = Infinity;
+        pool.forEach(function (v) {
+          const m = (v.url || '').match(/\/(\d+)x(\d+)\//);
+          const score = Math.abs((m ? parseInt(m[1], 10) : 0) - 1280);
+          if (score < bestScore) { bestScore = score; best = v; }
+        });
+        return best.url || null;
       }
+
+      // Normalisasi skema fxtwitter: { tweet: { media: { videos: [...] } } }
+      function normalizeFx(data) {
+        if (!data || !data.tweet) return null;
+        const videos = (data.tweet.media && data.tweet.media.videos) || [];
+        if (!videos.length) return null;
+        const v = videos[0];
+        const variants = (v.variants && v.variants.length)
+          ? v.variants
+          : (v.url ? [{ url: v.url, content_type: 'video/mp4' }] : []);
+        return {
+          videoUrl: pickBestMp4(variants),
+          title: data.tweet.text ? data.tweet.text.replace(/https:\/\/t\.co\/\w+/g, '').trim().slice(0, 100) : 'Video X',
+          thumbnail: v.thumbnail_url || null,
+        };
+      }
+
+      // Normalisasi skema vxtwitter: { hasMedia, mediaURLs[], media_extended[] }
+      function normalizeVx(data) {
+        if (!data || !data.hasMedia) return null;
+        const ext = (data.media_extended && data.media_extended.length) ? data.media_extended[0] : null;
+        const videoUrl = ext ? ext.url : ((data.mediaURLs && data.mediaURLs[0]) || null);
+        if (!videoUrl) return null;
+        return {
+          videoUrl: videoUrl,
+          title: data.text ? data.text.replace(/https:\/\/t\.co\/\w+/g, '').trim().slice(0, 100) : 'Video X',
+          thumbnail: ext ? ext.thumbnail_url : null,
+        };
+      }
+
+      // Normalisasi lapis 3: scrape halaman status X langsung.
+      // Halaman X memuat URL video.twimg.com di HTML-nya (slash kadang
+      // diescape "\/" di JSON tertanam, jadi dinormalkan dulu).
+      // Judul dari og:description, thumbnail dari og:image.
+      function parseXPage(html) {
+        if (!html) return null;
+        const clean = html.replace(/\\\//g, '/');
+        const urls = clean.match(/https:\/\/video\.twimg\.com\/[^\s"'<>\\]+\.mp4(?:\?[^\s"'<>\\]*)?/g) || [];
+        const uniq = [...new Set(urls)];
+        if (!uniq.length) return null;
+        const variants = uniq.map(function (u) { return { url: u, content_type: 'video/mp4' }; });
+        const meta = function (prop) {
+          const m1 = html.match(new RegExp('<meta[^>]+property="og:' + prop + '"[^>]*content="([^"]*)"', 'i'));
+          const m2 = html.match(new RegExp('<meta[^>]+content="([^"]*)"[^>]*property="og:' + prop + '"', 'i'));
+          const v = (m1 && m1[1]) || (m2 && m2[1]) || null;
+          return v ? v.replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&lt;/g, '<').replace(/&gt;/g, '>') : null;
+        };
+        const desc = meta('description');
+        return {
+          videoUrl: pickBestMp4(variants),
+          title: desc ? desc.replace(/https:\/\/t\.co\/\w+/g, '').trim().slice(0, 100) : 'Video X',
+          thumbnail: meta('image'),
+        };
+      }
+
+      const upstreams = [
+        { base: 'https://api.fxtwitter.com/i/status/', norm: normalizeFx, name: 'fxtwitter' },
+        { base: 'https://api.vxtwitter.com/i/status/', norm: normalizeVx, name: 'vxtwitter' },
+      ];
+
+      let lastErr = null;
+      for (let i = 0; i < upstreams.length; i++) {
+        try {
+          const resp = await fetch(upstreams[i].base + tweetId, {
+            headers: { 'User-Agent': 'Mozilla/5.0' },
+          });
+          const ct = resp.headers.get('content-type') || '';
+          if (!resp.ok || ct.indexOf('json') === -1) {
+            lastErr = upstreams[i].name + ' balas non-JSON (status ' + resp.status + ')';
+            continue;
+          }
+          const data = await resp.json();
+          const out = upstreams[i].norm(data);
+          if (out && out.videoUrl) {
+            return jsonResp({
+              success: true,
+              title: out.title,
+              videoUrl: out.videoUrl,
+              thumbnail: out.thumbnail,
+              via: upstreams[i].name,
+            });
+          }
+          lastErr = upstreams[i].name + ': tweet tidak memiliki video';
+        } catch (err) {
+          lastErr = upstreams[i].name + ': ' + err.message;
+        }
+      }
+
+      // Lapis 3: scrape halaman status X langsung (server-side).
+      // Jalur ini yang terverifikasi manual 2026-10-21 saat fxtwitter
+      // membalas halaman tantangan ke IP server: halaman x.com tetap
+      // menyajikan URL video.twimg.com secara terbuka.
+      try {
+        const page = await fetch('https://x.com/i/status/' + tweetId, {
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/128.0 Safari/537.36',
+            'Accept-Language': 'en-US,en;q=0.9',
+          },
+          redirect: 'follow',
+        });
+        if (page.ok) {
+          const out = parseXPage(await page.text());
+          if (out && out.videoUrl) {
+            return jsonResp({
+              success: true,
+              title: out.title,
+              videoUrl: out.videoUrl,
+              thumbnail: out.thumbnail,
+              via: 'xpage',
+            });
+          }
+          lastErr = 'xpage: video tidak ditemukan di halaman X';
+        } else {
+          lastErr = 'xpage: halaman X balas status ' + page.status;
+        }
+      } catch (err) {
+        lastErr = 'xpage: ' + err.message;
+      }
+
+      return jsonResp({
+        error: 'Resolver X sedang tidak bisa dijangkau dari server. Coba lagi beberapa menit, atau tempel link MP4 direct (video.twimg.com) ke Mode 1 generator.',
+        detail: lastErr,
+      }, 503);
     }
 
     // ---------- 3. API: VIDEO STREAM PROXY (milik generator, proteksi domain) ----------
