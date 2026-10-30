@@ -832,114 +832,9 @@
         .ji-besar { font-size:16px; }
         .ji-koin { font-size:22px; }
       }
-    /* === GERBANG PASSWORD (pintu masuk situs) === */
-    .pw-gate-layer {
-      position: fixed;
-      inset: 0;
-      z-index: 2147483647;
-      background: radial-gradient(ellipse at center, #141416 0%, #000000 78%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
-    }
-    .pw-gate-layer.hidden { display: none; }
-    .pw-gate-card {
-      width: 100%;
-      max-width: 360px;
-      text-align: center;
-      background: #0e0e10;
-      border: 1px solid #2c2d33;
-      border-radius: 20px;
-      padding: 32px 24px;
-      box-shadow: 0 10px 50px rgba(0,0,0,0.9), 0 0 30px rgba(249,115,22,0.12);
-      font-family: 'Outfit', sans-serif;
-      animation: slideUpIn 0.35s cubic-bezier(0.175,0.885,0.32,1.275);
-    }
-    .pw-gate-logo { font-size: 48px; margin-bottom: 10px; }
-    .pw-gate-card h2 {
-      font-size: 26px;
-      font-weight: 900;
-      color: var(--primary);
-      margin-bottom: 6px;
-      letter-spacing: -0.5px;
-    }
-    .pw-gate-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
-    #pw-input {
-      width: 100%;
-      padding: 13px 16px;
-      font-size: 16px;
-      text-align: center;
-      font-family: 'Outfit', sans-serif;
-      font-weight: 700;
-      letter-spacing: 2px;
-      background: #141416;
-      border: 1px solid #2c2d33;
-      border-radius: 12px;
-      color: #f3f4f6;
-      outline: none;
-      margin-bottom: 12px;
-      transition: border-color 0.2s, box-shadow 0.2s;
-    }
-    #pw-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(249,115,22,0.25); }
-    #pw-submit {
-      width: 100%;
-      padding: 13px;
-      font-family: 'Outfit', sans-serif;
-      font-size: 15px;
-      font-weight: 800;
-      letter-spacing: 0.3px;
-      background: var(--primary);
-      color: #ffffff;
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
-      box-shadow: 0 4px 16px rgba(249,115,22,0.35);
-      transition: background 0.2s, transform 0.1s;
-    }
-    #pw-submit:hover { background: var(--primary-hover); }
-    #pw-submit:active { transform: scale(0.98); }
-    .pw-error { min-height: 20px; font-size: 13px; font-weight: 700; color: #ef4444; margin-top: 10px; }
-    .pw-blocked-icon { font-size: 48px; margin-bottom: 10px; }
-    .pw-blocked-title { font-size: 20px; font-weight: 800; color: #ef4444; margin-bottom: 8px; }
-    .pw-blocked-desc { font-size: 14px; color: #d1d5db; margin-bottom: 18px; line-height: 1.5; }
-    #pw-retry {
-      padding: 11px 22px;
-      font-family: 'Outfit', sans-serif;
-      font-size: 14px;
-      font-weight: 700;
-      background: transparent;
-      color: var(--text);
-      border: 1px solid var(--border);
-      border-radius: 25px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    #pw-retry:hover { border-color: var(--primary); color: var(--primary); }
   </style>
 </head>
 <body>
-
-  <!-- ==================== GERBANG PASSWORD ==================== -->
-  <div class="pw-gate-layer" id="pw-gate-layer">
-    <div class="pw-gate-card">
-      <div class="pw-gate-logo">🔐</div>
-      <h2>Colek.me</h2>
-      <p class="pw-gate-sub">Area eksklusif &mdash; masukkan password untuk melanjutkan</p>
-      <div id="pw-form-wrap">
-        <input type="password" id="pw-input" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;" autocomplete="off" maxlength="32">
-        <button id="pw-submit">Masuk &#128275;</button>
-        <div class="pw-error" id="pw-error"></div>
-      </div>
-      <div id="pw-blocked-wrap" style="display:none;">
-        <div class="pw-blocked-icon">&#128737;</div>
-        <div class="pw-blocked-title">Akses Ditahan</div>
-        <div class="pw-blocked-desc">Lepas DNS atau AdBlock untuk dapat mengakses website.</div>
-        <button id="pw-retry">Saya Sudah Melepasnya &#128260;</button>
-      </div>
-    </div>
-  </div>
-
 
   <!-- Social Bar Adsterra -->
   <div id="social-bar-wrap">
@@ -1269,7 +1164,6 @@
         return;
       }
       if (e.target && e.target.closest && e.target.closest("#" + FS_GATE_LAYER_ID)) return;
-      if (e.target && e.target.closest && e.target.closest("#pw-gate-layer")) return;
 
       var klikTombolNext = e.target && e.target.closest && e.target.closest("#next-btn");
 
@@ -1713,93 +1607,18 @@
     document.getElementById("next-btn").addEventListener("click", handleNextButtonClick);
 
     // ============================================
-    // 🔐 GERBANG PASSWORD (pintu masuk situs)
-    // --------------------------------------------
-    // - Pengunjung wajib isi password '123456'.
-    // - Jika adblock TERBUKTI (pola khas, v2): kolom password disembunyikan,
-    //   tampil pesan agar melepas AdBlock + tombol coba lagi.
-    // - Jika hasil deteksi meragukan (mis. jaringan HP lemot / DNS operator):
-    //   tetap boleh masuk (fail-open).
-    // - Setelah masuk: bebas (adblock boleh dinyalakan lagi).
-    // - Sesi diingat per perangkat selama 6 jam (localStorage).
-    // ============================================
-    var PW_GATE_PASSWORD = "123456";
-    var PW_GATE_SESSION_KEY = "colekme_pw_session";
-    var PW_GATE_SESSION_MS = 6 * 60 * 60 * 1000; // 6 jam
-
-    function pwSesiBerlaku() {
-      try {
-        var raw = localStorage.getItem(PW_GATE_SESSION_KEY);
-        if (!raw) return false;
-        return (Date.now() - parseInt(raw, 10)) < PW_GATE_SESSION_MS;
-      } catch (e) { return false; }
-    }
-
-    function pwSimpanSesi() {
-      try { localStorage.setItem(PW_GATE_SESSION_KEY, String(Date.now())); } catch (e) {}
-    }
-
-    async function pwJalankanDeteksi() {
-      var hasil = await detectAdblock(); // "blocked" | "clean" | "unknown"
-      var formWrap = document.getElementById("pw-form-wrap");
-      var blockedWrap = document.getElementById("pw-blocked-wrap");
-      if (hasil === "blocked") {
-        // Yakin ada adblock -> tahan di pintu seperti dulu.
-        formWrap.style.display = "none";
-        blockedWrap.style.display = "block";
-      } else {
-        // "clean" maupun "unknown" (ragu, mis. jaringan HP bermasalah) -> tetap boleh masuk.
-        // Jangan menghukum pengguna saat kita tidak yakin.
-        blockedWrap.style.display = "none";
-        formWrap.style.display = "block";
-        setTimeout(function() {
-          var inp = document.getElementById("pw-input");
-          if (inp) inp.focus();
-        }, 150);
-      }
-    }
-
-    function pwBukaGerbang() {
-      document.getElementById("pw-gate-layer").classList.add("hidden");
-      initApp();
-    }
-
-    function pwCekPassword() {
-      var inp = document.getElementById("pw-input");
-      var err = document.getElementById("pw-error");
-      if (inp.value === PW_GATE_PASSWORD) {
-        err.textContent = "";
-        pwSimpanSesi();
-        pwBukaGerbang();
-      } else {
-        err.textContent = "Password salah, coba lagi.";
-        inp.select();
-      }
-    }
-
-    // ============================================
     // 🚀 INIT & BOOT
     // ============================================
+    // Password gate DINONAKTIFKAN 2026-10-29: pengunjung langsung masuk,
+    // tanpa password dan tanpa cek adblock di pintu masuk.
+    // (Fungsi detectAdblock masih ada di file tapi sudah tidak dipanggil.)
     async function initApp() {
       await fetchMasterGist();
       loadRandomVideo();
     }
 
     (function boot() {
-      var gate = document.getElementById("pw-gate-layer");
-      document.getElementById("pw-submit").addEventListener("click", pwCekPassword);
-      document.getElementById("pw-input").addEventListener("keydown", function(e) {
-        if (e.key === "Enter") pwCekPassword();
-      });
-      document.getElementById("pw-retry").addEventListener("click", function() {
-        pwJalankanDeteksi();
-      });
-      if (pwSesiBerlaku()) {
-        gate.classList.add("hidden");
-        initApp();
-      } else {
-        pwJalankanDeteksi();
-      }
+      initApp();
     })();
   </script>
 </body>
